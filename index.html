@@ -2,102 +2,214 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="icon" type="image/svg+xml" href="dsplogo.jpg" />
     <title>Sharing of DSP Figure Making</title>
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
-          name="viewport" />
-
-    <!-- 可在这里写 CSS 样式，或链接外部 CSS 文件 -->
     <style>
-
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            padding: 20px; /* 网页内容和浏览器边缘的内间距 */
-            font-family: "微软雅黑", Arial, sans-serif; /* 优先用微软雅黑，适配 Windows 系统 */
-            color: #333; /* 页面默认文字颜色 */
-        }
-
-        h2 {
-            color: #333; /* 标题文字颜色，深灰色 */
-            font-size: 20px; /* 标题字号 */
-            margin-top: 30px; /* 和上面元素的间距 */
-        }
-
-        p {
-            color: #666; /* 段落文字颜色，浅灰色 */
-            line-height: 1.6; /* 行高，让文字更易读 */
-        }
-
-        img:hover {
-            transform: scale(1.1); /* 悬停时放大 1.1 倍 */
-            opacity: 0.8; /* 稍微变透明，营造朦胧感 */
-        }
-        /* 基础样式 */
-        html, body {
+        * {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: "微软雅黑", Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
         /* 全屏视频容器 */
         .fullscreen-video {
             position: relative;
             width: 100%;
-            height: 100vh; /* 视口高度 */
+            height: 100vh;
             min-height: 480px;
             overflow: hidden;
         }
+        
         .fullscreen-video video {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            
-        }
-        .content-section {
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            display: block;
-            text-align:center;
-            max-width: 70%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
             height: auto;
-            margin:20px auto;
+            object-fit: cover;
         }
-        @media(max-width:768px){
-            .content-section{
-                max-width:90%;
-                margin:10px auto;}
+        
+        /* 内容区域样式 */
+        .content-section {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin: 30px auto;
+            padding: 30px;
+            text-align: center;
+            max-width: 90%;
+            z-index: 10;
+            transition: all 0.3s ease;
         }
-
+        
+        /* 内容区域内的元素 */
+        .content-section h2 {
+            color: #444;
+            font-size: 24px;
+            margin: 20px 0 15px;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .content-section p {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .media-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .content-section img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .content-section img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+        
+        .content-section video {
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-btn {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: linear-gradient(to right, #4a69bd, #6a89cc);
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(74, 105, 189, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(74, 105, 189, 0.5);
+            background: linear-gradient(to right, #6a89cc, #4a69bd);
+        }
+        
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .content-section {
+                max-width: 95%;
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+            
+            .content-section h2 {
+                font-size: 20px;
+            }
+            
+            .content-section p {
+                font-size: 14px;
+            }
+            
+            .media-container {
+                margin: 15px 0;
+            }
+            
+            .download-btn {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
+            
+            .fullscreen-video {
+                height: 60vh;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content-section {
+                border-radius: 10px;
+                padding: 15px 10px;
+            }
+            
+            .content-section h2 {
+                font-size: 18px;
+                margin: 15px 0 10px;
+            }
+            
+            .fullscreen-video {
+                height: 50vh;
+                min-height: 350px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- 全屏视频部分 -->
     <div class="fullscreen-video">
-        <video muted loop autoplay>
+        <video muted loop autoplay playsinline>
             <source src="xve.webm" type="video/webm">
+            <p>您的浏览器不支持HTML5视频</p >
         </video>
     </div>
 
-    <!-- 空的内容区域 -->
+    <!-- 内容区域 -->
     <div class="content-section">
-        <!-- 此处可添加网站内容 -->
         <h2>邓紫棋相关图片</h2>
-        <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p>
-        <img src="邓紫棋.1.jpg" alt="图片描述" width="600">
-        <br><br>
-        <a href="邓紫棋.1.jpg" download="邓紫棋.1.jpg"
-           class="download-btn" style="display:block;text-align:center;">下载</a>
-
+        <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p >
+        <div class="media-container">
+            < img src="邓紫棋.1.jpg" alt="邓紫棋精美照片">
+            <a href="#"download="邓紫棋.1.jpg"class="download-btn">下载照片</a>
+        </div>
+        
         <h2>精彩视频展示</h2>
-        <p>一段超精彩的视频内容，快来看看吧～</p>
-        <video src="ysjf.mp4" controls width="600">
-            您的浏览器不支持视频播放
-        </video>
+        <p>一段超精彩的视频内容，快来看看吧～</p >
+        <div class="media-container">
+            <video controls playsinline>
+                <source src="ysjf.mp4" type="video/mp4">
+                您的浏览器不支持视频播放
+            </video>
+        </div>
     </div>
+    
+    <script>
+        // 解决iOS自动播放问题
+        document.addEventListener('DOMContentLoaded', function() {
+            const videos = document.querySelectorAll('video');
+            
+            if ('playsInline' in document.createElement('video')) {
+                videos.forEach(video => {
+                    video.setAttribute('playsinline', true);
+                    video.setAttribute('webkit-playsinline', true);
+                });
+            }
+            
+            // 尝试自动播放视频（需要用户交互）
+            document.addEventListener('click', function() {
+                videos.forEach(video => {
+                    video.play().catch(e => console.log('自动播放失败:', e));
+                });
+            }, {once: true});
+        });
+    </script>
 </body>
 </html>
