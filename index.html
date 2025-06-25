@@ -13,7 +13,7 @@
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            /*padding: 20px; /* 网页内容和浏览器边缘的内间距 */
+            padding: 20px; /* 网页内容和浏览器边缘的内间距 */
             font-family: "微软雅黑", Arial, sans-serif; /* 优先用微软雅黑，适配 Windows 系统 */
             color: #333; /* 页面默认文字颜色 */
         }
@@ -59,21 +59,15 @@
             display: block;
             
         }
-
-        /* 普通图片和视频样式（不影响背景视频） */
-        .normal-video, .normal-img {
+        .content-section {
+            padding: 20px;
+            background-color: white;
             border-radius: 10px;
             transition: all 0.3s ease;
             display: block;
             margin: 20px auto;
-            max-width: 80%;
+            max-width: 70%;
             height: auto;
-        }
-        .content-section {
-            width: 100%;
-            min-height: 100vh;
-            padding: 20px;
-            background-color: white;
         }
 
     </style>
@@ -102,29 +96,5 @@
             您的浏览器不支持视频播放
         </video>
     </div>
-
-    <script>
-        // 处理浏览器自动播放限制
-        document.addEventListener('DOMContentLoaded', function () {
-            const video = document.getElementById('background-video');
-            video.play().catch(err => {
-                console.log('自动播放被阻止，请点击屏幕播放');
-                document.addEventListener('click', function playOnClick() {
-                    video.play();
-                    document.removeEventListener('click', playOnClick);
-                });
-            });
-        });
-        window.addEventListener('load', function () {
-            // 找到溢出的元素（比如视频容器）
-            const videoContainer = document.querySelector('.fullscreen-video');
-            // 强制宽度=视口宽度
-            videoContainer.style.width = window.innerWidth + 'px';
-            // 监听窗口变化，动态重置
-            window.addEventListener('resize', function () {
-                videoContainer.style.width = window.innerWidth + 'px';
-            });
-        });
-    </script>
 </body>
 </html>
