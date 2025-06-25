@@ -68,6 +68,11 @@
             display: block; /* 让图片、视频独占一行 */
             margin: 20px auto; /* 上下间距 20 像素，水平居中 */
         }
+        img {
+              max-width: 100%;       /* 图片最大宽度不超过父容器 */
+              height: auto;         /* 保持图片原始比例 */
+              display: block;       /* 消除图片底部间隙 */
+            }
     </style>
 </head>
 <body>
