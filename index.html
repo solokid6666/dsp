@@ -191,26 +191,5 @@
             </video>
         </div>
     </div>
-    
-    <script>
-        // 解决iOS自动播放问题
-        document.addEventListener('DOMContentLoaded', function() {
-            const videos = document.querySelectorAll('video');
-            
-            if ('playsInline' in document.createElement('video')) {
-                videos.forEach(video => {
-                    video.setAttribute('playsinline', true);
-                    video.setAttribute('webkit-playsinline', true);
-                });
-            }
-            
-            // 尝试自动播放视频（需要用户交互）
-            document.addEventListener('click', function() {
-                videos.forEach(video => {
-                    video.play().catch(e => console.log('自动播放失败:', e));
-                });
-            }, {once: true});
-        });
-    </script>
 </body>
 </html>
