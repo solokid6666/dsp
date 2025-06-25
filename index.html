@@ -73,10 +73,11 @@
             flex-direction: column;
             align-items: center;
             margin: 20px 0;
+            width:100%;
         }
         
         .content-section img {
-            max-width: 90%;
+            max-width: 80%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -90,12 +91,12 @@
         }
         
         .content-section video {
-            max-width: 90%;
+            max-width: 80%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+         /*下载按钮*/
         .download-btn {
             display: inline-block;
             margin: 20px auto;
@@ -108,7 +109,6 @@
             box-shadow: 0 4px 10px rgba(74, 105, 189, 0.3);
             transition: all 0.3s ease;
         }
-        
         .download-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(74, 105, 189, 0.5);
@@ -144,7 +144,7 @@
                 height: 60vh;
             }
         }
-        
+        /*移动端优化*/
         @media (max-width: 480px) {
             .content-section {
                 border-radius: 10px;
@@ -177,7 +177,7 @@
         <h2>邓紫棋相关图片</h2>
         <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p >
         <div class="media-container">
-            < img src="邓紫棋.1.jpg" alt="邓紫棋精美照片">
+            <img src="邓紫棋.1.jpg" alt="邓紫棋精美照片">
             <a href="#"download="邓紫棋.1.jpg"class="download-btn">下载照片</a>
         </div>
         
