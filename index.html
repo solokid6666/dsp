@@ -6,24 +6,18 @@
     <title>Sharing of DSP Figure Making</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
           name="viewport" />
-    
+
     <!-- 可在这里写 CSS 样式，或链接外部 CSS 文件 -->
     <style>
 
         body {
-            /* 纯色背景示例，换成你喜欢的颜色值，比如 #f0f0f0 是浅灰色 */
-            /*background-color: #769f64;*/
-            /* 背景图示例，替换成实际背景图路径，可搭配背景属性控制重复、位置等 */
-            background-image: url("background.jpg");
-            background-repeat: no-repeat; /* 背景图不重复 */
-            background-size: cover; /* 背景图覆盖整个页面 */
-            background-position: center; /* 背景图居中显示 */
             text-align: center;
             font-family: Arial, sans-serif;
             padding: 20px; /* 网页内容和浏览器边缘的内间距 */
             font-family: "微软雅黑", Arial, sans-serif; /* 优先用微软雅黑，适配 Windows 系统 */
             color: #333; /* 页面默认文字颜色 */
         }
+
         h2 {
             color: #333; /* 标题文字颜色，深灰色 */
             font-size: 20px; /* 标题字号 */
@@ -34,36 +28,88 @@
             color: #666; /* 段落文字颜色，浅灰色 */
             line-height: 1.6; /* 行高，让文字更易读 */
         }
+
         img:hover {
             transform: scale(1.1); /* 悬停时放大 1.1 倍 */
             opacity: 0.8; /* 稍微变透明，营造朦胧感 */
         }
-        img, video {
-            /*border: 3px solid #000000; /* 黑色实线边框，3 像素宽 */
-            border-radius: 10px; /* 圆角效果，数值越大越圆 */
-            transition: all 0.3s ease; /* 过渡效果，让变化更顺滑 */
-            display: block; /* 让图片、视频独占一行 */
-            margin: 20px auto; /* 上下间距 20 像素，水平居中 */
-            max-width: 80%; /* 图片最大宽度不超过父容器 */
-            height: auto; /* 保持图片原始比例 */
-            display: block; /* 消除图片底部间隙 */
+        /* 基础样式 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden; /* 隐藏滚动条，确保视频铺满 */
         }
-        
+        /* 全屏视频容器 */
+        .fullscreen-video {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* 视口高度 */
+            min-height: 480px;
+            overflow: hidden;
+        }
+        .fullscreen-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 普通图片和视频样式（不影响背景视频） */
+        .normal-video, .normal-img {
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+            max-width: 80%;
+            height: auto;
+        }
+        .content-section {
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+            background-color: white;
+        }
+
     </style>
 </head>
 <body>
-    <!-- 在 <body> 里图片、视频标签前后加标题和段落 -->
-    <h2>邓紫棋相关图片</h2>
-    <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p>
-    <img src="邓紫棋.1.jpg" alt="图片描述" width="600">
-    <!-- 下载图片 -->
-    <a href="邓紫棋.1.jpg" download="邓紫棋.1.jpg"
-       class="download-btn">下载</a>
-    <h2>精彩视频展示</h2>
-    <p>一段超精彩的视频内容，快来看看吧～</p>
-    <video src="ysjf.mp4" controls width="600">
-        您的浏览器不支持视频播放
-    </video>
-    
+    <!-- 全屏视频部分 -->
+    <div class="fullscreen-video">
+        <video muted loop autoplay>
+            <source src="xve.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- 空的内容区域 -->
+    <div class="content-section">
+        <!-- 此处可添加网站内容 -->
+        <h2>邓紫棋相关图片</h2>
+        <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p>
+        <img src="邓紫棋.1.jpg" alt="图片描述" width="600">
+        <br><br>
+        <a href="邓紫棋.1.jpg" download="邓紫棋.1.jpg"
+           class="download-btn" style="display:block;text-align:center;">下载</a>
+
+        <h2>精彩视频展示</h2>
+        <p>一段超精彩的视频内容，快来看看吧～</p>
+        <video src="ysjf.mp4" controls width="600">
+            您的浏览器不支持视频播放
+        </video>
+    </div>
+
+    <script>
+        // 处理浏览器自动播放限制
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('background-video');
+            video.play().catch(err => {
+                console.log('自动播放被阻止，请点击屏幕播放');
+                document.addEventListener('click', function playOnClick() {
+                    video.play();
+                    document.removeEventListener('click', playOnClick);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
