@@ -11,14 +11,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: "微软雅黑", Arial, sans-serif;
             color: #333;
             line-height: 1.6;
             overflow-x: hidden;
         }
-        
+
         /* 全屏视频容器 */
         .fullscreen-video {
             position: relative;
@@ -27,19 +27,19 @@
             min-height: 480px;
             overflow: hidden;
         }
-        
-        .fullscreen-video video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: cover;
-        }
-        
+
+            .fullscreen-video video {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                min-width: 100%;
+                min-height: 100%;
+                width: auto;
+                height: auto;
+                object-fit: cover;
+            }
+
         /* 内容区域样式 */
         .content-section {
             position: relative;
@@ -53,29 +53,29 @@
             z-index: 10;
             transition: all 0.3s ease;
         }
-        
-        /* 内容区域内的元素 */
-        .content-section h2 {
-            color: #444;
-            font-size: 24px;
-            margin: 20px 0 15px;
-            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-        }
-        
-        .content-section p {
-            color: #555;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-        
+
+            /* 内容区域内的元素 */
+            .content-section h2 {
+                color: #444;
+                font-size: 24px;
+                margin: 20px 0 15px;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+            }
+
+            .content-section p {
+                color: #555;
+                margin-bottom: 20px;
+                font-size: 16px;
+            }
+
         .media-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 20px 0;
-            width:100%;
+            width: 100%;
         }
-        
+
         .content-section img {
             max-width: 80%;
             height: auto;
@@ -83,20 +83,20 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
-        
-        .content-section img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            opacity: 0.9;
-        }
-        
+
+            .content-section img:hover {
+                transform: scale(1.05);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+                opacity: 0.9;
+            }
+
         .content-section video {
             max-width: 80%;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-         /*下载按钮*/
+        /*下载按钮*/
         .download-btn {
             display: inline-block;
             margin: 20px auto;
@@ -109,12 +109,13 @@
             box-shadow: 0 4px 10px rgba(74, 105, 189, 0.3);
             transition: all 0.3s ease;
         }
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(74, 105, 189, 0.5);
-            background: linear-gradient(to right, #6a89cc, #4a69bd);
-        }
-        
+
+            .download-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 15px rgba(74, 105, 189, 0.5);
+                background: linear-gradient(to right, #6a89cc, #4a69bd);
+            }
+
         /* 移动端优化 */
         @media (max-width: 768px) {
             .content-section {
@@ -122,24 +123,24 @@
                 padding: 20px 15px;
                 margin: 20px auto;
             }
-            
-            .content-section h2 {
-                font-size: 20px;
-            }
-            
-            .content-section p {
-                font-size: 14px;
-            }
-            
+
+                .content-section h2 {
+                    font-size: 20px;
+                }
+
+                .content-section p {
+                    font-size: 14px;
+                }
+
             .media-container {
                 margin: 15px 0;
             }
-            
+
             .download-btn {
                 padding: 10px 25px;
                 font-size: 14px;
             }
-            
+
             .fullscreen-video {
                 height: 60vh;
             }
@@ -150,16 +151,91 @@
                 border-radius: 10px;
                 padding: 15px 10px;
             }
-            
-            .content-section h2 {
-                font-size: 18px;
-                margin: 15px 0 10px;
-            }
-            
+
+                .content-section h2 {
+                    font-size: 18px;
+                    margin: 15px 0 10px;
+                }
+
             .fullscreen-video {
                 height: 50vh;
                 min-height: 350px;
             }
+        }
+
+        /*TXT窗口的相关设置*/
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalAppear 0.3s ease forwards;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: url('bg.jpg');
+            color: black;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            background: url('bg.jpg');
+            color: #333;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -174,8 +250,22 @@
     <div class="content-section">
         <a href="xve.mp4" download="xve.mp4" class="download-btn">下载开屏视频</a>
     </div>
+
+
     <!-- 内容区域 -->
     <div class="content-section">
+        <a id="openFileBtn" class="download-btn">
+            叮！您有一份信件待签收
+        </a>
+        <div id="fileModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">致栾好同学的信</div>
+                    <button id="closeModal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body" id="fileContent"></div>
+            </div>
+        </div>
 
         <h2>邓紫棋相关图片</h2>
         <p>这是一张超好看的邓紫棋照片，记录精彩瞬间～</p>
@@ -194,5 +284,25 @@
         </div>
         <a href="https://solokid6666.github.io/modeling/" class="download-btn">查看建模信息</a>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('fileModal');
+            const content = document.getElementById('fileContent');
+
+            // 事件处理函数
+            document.getElementById('openFileBtn').addEventListener('click', () => {
+                modal.style.display = 'flex';
+                fetch('letter.txt')
+                    .then(res => res.ok ? res.text() : Promise.reject(`错误: ${res.status}`))
+                    .then(data => content.textContent = data)
+                    .catch(err => console.error('文件加载失败:', err));
+            });
+
+            // 关闭模态框
+            const closeModal = () => modal.style.display = 'none';
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            modal.addEventListener('click', e => e.target === modal && closeModal());
+        });
+    </script>
 </body>
 </html>
