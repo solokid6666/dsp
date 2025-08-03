@@ -251,12 +251,17 @@
         <a href="xve.mp4" download="xve.mp4" class="download-btn">下载开屏视频</a>
     </div>
 
+    <div class="content-section">
+        <a id="copyBtn" class="download-btn">建议电脑端打开，点击获取网址</a>
+    </div>
+
+    <div class="content-section">
+        <a id="openFileBtn" class="download-btn">叮！您有一份信件待签收</a>
+    </div>
+
 
     <!-- 内容区域 -->
     <div class="content-section">
-        <a id="openFileBtn" class="download-btn">
-            叮！您有一份信件待签收
-        </a>
         <div id="fileModal" class="modal-overlay">
             <div class="modal-content">
                 <div class="modal-header">
@@ -285,6 +290,13 @@
         <a href="https://solokid6666.github.io/modeling/" class="download-btn">查看建模信息</a>
     </div>
     <script>
+        // 网址复制函数
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const text = 'https://solokid6666.github.io/dsp/';
+            navigator.clipboard.writeText(text)
+                .then(() => alert('复制成功'))
+                .catch(err => console.error('复制失败:', err));
+        });
         document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('fileModal');
             const content = document.getElementById('fileContent');
