@@ -125,6 +125,11 @@
             .skeleton-button {
                 @apply w-10 h-10 rounded-full bg-gray-200;
             }
+
+            /* 播放授权提示 */
+            .play-permission {
+                @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-4 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2;
+            }
         }
     </style>
 
@@ -564,10 +569,11 @@
             <!-- 音乐条目将通过JavaScript动态生成 -->
         </div>
 
-        <!-- 隐藏的音频播放器 -->
-        <audio id="audioPlayer" class="hidden">
-            您的浏览器不支持音频播放
-        </audio>
+        <!-- 播放授权提示 -->
+        <div id="playPermission" class="play-permission hidden">
+            <i class="fa fa-info-circle"></i>
+            <span>请点击任意位置授权后台播放</span>
+        </div>
     </div>
 
     <script>
@@ -689,16 +695,26 @@
             const MAX_CONCURRENT_REQUESTS = 20;
 
             // CountAPI 配置 - 用于全站播放次数统计
-            const COUNT_API_NAMESPACE = "my-music-site"; // 替换为你的命名空间
+            // 使用唯一的命名空间确保计数全局统一
+            const COUNT_API_NAMESPACE = "dsp-music-player"; 
+            const COUNT_API_KEY = "global-play-counts";
+
+            // Web Audio API 相关变量
+            let audioContext;
+            let audioSource;
+            let gainNode;
+            let audioBufferCache = {}; // 缓存音频缓冲
+            let isAudioContextInitialized = false;
+            let hasUserInteraction = false; // 标记用户是否已交互
 
             // 获取DOM元素
             const musicList = document.getElementById('musicList');
-            const audioPlayer = document.getElementById('audioPlayer');
             const nowPlaying = document.getElementById('nowPlaying');
             const currentSong = document.getElementById('currentSong');
             const globalPlayPause = document.getElementById('globalPlayPause');
             const searchBox = document.getElementById('searchBox');
             const searchBtn = document.getElementById('searchBtn');
+            const playPermission = document.getElementById('playPermission');
 
             // 播放模式按钮
             const orderPlayBtn = document.getElementById('orderPlay');
@@ -712,8 +728,145 @@
             // 播放状态跟踪变量
             let currentPlayingId = null;
             let currentSongSrc = '';
+            let currentSongTitle = '';
             let isFirstPlay = true;       // 标记是否首次播放，避免重复计数
             let isCountLoading = false;   // 防止重复计数请求
+            let currentAudioBuffer = null;
+            let audioSourceNode = null;
+
+            // 初始化Web Audio Context
+            function initAudioContext() {
+                if (isAudioContextInitialized) return;
+                
+                try {
+                    // 尝试创建AudioContext
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new AudioContext();
+                    
+                    // 创建音量控制节点
+                    gainNode = audioContext.createGain();
+                    gainNode.connect(audioContext.destination);
+                    
+                    isAudioContextInitialized = true;
+                } catch (e) {
+                    console.error('Web Audio API不受支持:', e);
+                    alert('您的浏览器不支持Web Audio API，可能无法正常播放音乐');
+                }
+            }
+
+            // 请求用户交互以解锁音频播放
+            function requestAudioUnlock() {
+                if (hasUserInteraction || isAudioContextInitialized && audioContext.state === 'running') {
+                    return Promise.resolve(true);
+                }
+
+                // 显示授权提示
+                playPermission.classList.remove('hidden');
+
+                return new Promise(resolve => {
+                    // 用户交互事件处理函数
+                    const unlockHandler = () => {
+                        // 初始化音频上下文
+                        initAudioContext();
+                        
+                        // 如果音频上下文被挂起，恢复它
+                        if (audioContext && audioContext.state === 'suspended') {
+                            audioContext.resume();
+                        }
+                        
+                        hasUserInteraction = true;
+                        playPermission.classList.add('hidden');
+                        
+                        // 移除所有事件监听器
+                        document.removeEventListener('click', unlockHandler);
+                        document.removeEventListener('touchstart', unlockHandler);
+                        document.removeEventListener('keydown', unlockHandler);
+                        
+                        resolve(true);
+                    };
+                    
+                    // 添加多种交互事件监听器
+                    document.addEventListener('click', unlockHandler);
+                    document.addEventListener('touchstart', unlockHandler);
+                    document.addEventListener('keydown', unlockHandler);
+                });
+            }
+
+            // 加载音频文件到缓冲区
+            async function loadAudioBuffer(url) {
+                // 检查缓存
+                if (audioBufferCache[url]) {
+                    return audioBufferCache[url];
+                }
+
+                try {
+                    const response = await fetch(url);
+                    const arrayBuffer = await response.arrayBuffer();
+                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                    
+                    // 缓存音频缓冲
+                    audioBufferCache[url] = audioBuffer;
+                    return audioBuffer;
+                } catch (error) {
+                    console.error(`加载音频失败: ${url}`, error);
+                    throw error;
+                }
+            }
+
+            // 播放音频缓冲
+            function playAudioBuffer(audioBuffer) {
+                // 停止当前播放
+                stopAudio();
+                
+                // 创建新的音频源
+                audioSourceNode = audioContext.createBufferSource();
+                audioSourceNode.buffer = audioBuffer;
+                audioSourceNode.connect(gainNode);
+                
+                // 单曲循环设置
+                audioSourceNode.loop = currentMode === PLAY_MODES.SINGLE_LOOP;
+                
+                // 播放结束时处理
+                audioSourceNode.onended = handleAudioEnded;
+                
+                // 开始播放
+                audioSourceNode.start(0);
+                return audioSourceNode;
+            }
+
+            // 停止当前音频播放
+            function stopAudio() {
+                if (audioSourceNode) {
+                    try {
+                        audioSourceNode.stop();
+                    } catch (e) {
+                        console.warn('停止音频时出错:', e);
+                    }
+                    audioSourceNode = null;
+                }
+            }
+
+            // 处理音频播放结束
+            function handleAudioEnded() {
+                // 单曲循环模式不需要处理，Web Audio会自动循环
+                if (currentMode !== PLAY_MODES.SINGLE_LOOP) {
+                    playNextSong();
+                }
+            }
+
+            // 暂停音频播放
+            function pauseAudio() {
+                if (audioContext && audioContext.state === 'running') {
+                    audioContext.suspend();
+                }
+            }
+
+            // 恢复音频播放
+            function resumeAudio() {
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }
 
             // 检查缓存是否有效
             function isCacheValid(cacheTime) {
@@ -721,7 +874,7 @@
                 return (Date.now() - cacheTime) < CACHE_EXPIRY;
             }
 
-            // CountAPI 实现全站播放次数统计，增加缓存机制
+            // CountAPI 实现全站播放次数统计，确保全局统一计数
             const countAPI = {
                 /**
                  * 获取歌曲的播放次数（优先使用缓存）
@@ -730,6 +883,9 @@
                  */
                 async getPlayCount(songId) {
                     try {
+                        // 构建唯一的计数器名称
+                        const counterName = `song-${songId}`;
+                        
                         // 尝试从本地存储获取缓存
                         const cachedData = localStorage.getItem(`playCount_${songId}`);
                         if (cachedData) {
@@ -742,7 +898,7 @@
 
                         // 缓存不存在或已过期，请求API
                         const response = await fetch(
-                            `https://api.countapi.xyz/get/${COUNT_API_NAMESPACE}/song-${songId}`
+                            `https://api.countapi.xyz/get/${COUNT_API_NAMESPACE}/${counterName}`
                         );
 
                         const data = await response.json();
@@ -778,9 +934,12 @@
                     isCountLoading = true;
 
                     try {
+                        // 构建唯一的计数器名称
+                        const counterName = `song-${songId}`;
+                        
                         // 调用CountAPI增加播放次数
                         const response = await fetch(
-                            `https://api.countapi.xyz/hit/${COUNT_API_NAMESPACE}/song-${songId}`
+                            `https://api.countapi.xyz/hit/${COUNT_API_NAMESPACE}/${counterName}`
                         );
 
                         const data = await response.json();
@@ -837,6 +996,11 @@
                     case PLAY_MODES.RANDOM:
                         randomPlayBtn.classList.add('active');
                         break;
+                }
+                
+                // 更新当前播放的循环状态
+                if (audioSourceNode) {
+                    audioSourceNode.loop = currentMode === PLAY_MODES.SINGLE_LOOP;
                 }
             }
 
@@ -1136,7 +1300,10 @@
              * 处理播放按钮点击事件
              * @param {Event} e - 点击事件对象
              */
-            function handlePlayButtonClick(e) {
+            async function handlePlayButtonClick(e) {
+                // 确保有用户交互并解锁音频
+                await requestAudioUnlock();
+                
                 const btn = e.currentTarget;
                 const songId = parseInt(btn.dataset.id);
                 const songSrc = btn.dataset.src;
@@ -1145,32 +1312,35 @@
                 // 检查是否是当前正在播放的歌曲
                 if (currentPlayingId === songId) {
                     // 如果是同一首歌，切换播放/暂停状态
-                    if (audioPlayer.paused) {
-                        resumePlayback(btn);
-                    } else {
+                    if (audioContext && audioContext.state === 'running') {
                         pausePlayback(btn);
+                    } else {
+                        resumePlayback(btn);
                     }
                 } else {
                     // 如果是不同的歌曲，切换并从头播放
                     isFirstPlay = true; // 新歌曲标记为首次播放
-                    switchToSong(songId, songSrc, songTitle, btn);
+                    await switchToSong(songId, songSrc, songTitle, btn);
                 }
             }
 
             /**
              * 处理全局播放/暂停按钮点击
              */
-            function handleGlobalPlayPause() {
+            async function handleGlobalPlayPause() {
                 if (!currentSongSrc) return; // 没有播放中的歌曲
+                
+                // 确保有用户交互并解锁音频
+                await requestAudioUnlock();
 
                 const currentBtn = document.querySelector(`.play-btn[data-src="${currentSongSrc}"]`);
                 if (!currentBtn) return;
 
                 // 统一使用相同的播放/暂停逻辑
-                if (audioPlayer.paused) {
-                    resumePlayback(currentBtn);
-                } else {
+                if (audioContext && audioContext.state === 'running') {
                     pausePlayback(currentBtn);
+                } else {
+                    resumePlayback(currentBtn);
                 }
             }
 
@@ -1181,20 +1351,25 @@
              * @param {string} songTitle - 歌曲标题
              * @param {HTMLElement} btn - 播放按钮元素
              */
-            function switchToSong(songId, songSrc, songTitle, btn) {
-                // 重置之前的播放状态
-                resetAllPlayButtons();
+            async function switchToSong(songId, songSrc, songTitle, btn) {
+                try {
+                    // 重置之前的播放状态
+                    resetAllPlayButtons();
 
-                // 更新当前播放状态
-                currentPlayingId = songId;
-                currentSongSrc = songSrc;
+                    // 更新当前播放状态
+                    currentPlayingId = songId;
+                    currentSongSrc = songSrc;
+                    currentSongTitle = songTitle;
 
-                // 设置新的音频源并从头播放
-                audioPlayer.src = songSrc;
-                audioPlayer.currentTime = 0; // 确保从头开始播放
+                    // 显示加载状态
+                    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                    
+                    // 加载音频文件
+                    currentAudioBuffer = await loadAudioBuffer(songSrc);
+                    
+                    // 播放音频
+                    playAudioBuffer(currentAudioBuffer);
 
-                // 尝试播放
-                audioPlayer.play().then(() => {
                     // 首次播放时才增加计数
                     if (isFirstPlay) {
                         incrementAndUpdateCount(songId);
@@ -1204,22 +1379,23 @@
                     updateButtonState(btn, true);
                     updateGlobalButtonState(true);
                     showNowPlaying(songTitle);
-                }).catch(err => {
+                } catch (err) {
                     console.error('播放失败:', err);
                     alert('播放失败，请检查文件路径是否正确或浏览器安全设置');
-                });
+                    btn.innerHTML = '<i class="fa fa-play"></i>';
+                }
             }
 
             /**
              * 播放下一首歌曲
              */
-            function playNextSong() {
+            async function playNextSong() {
                 const nextSong = getNextSong();
                 if (nextSong) {
                     const btn = document.querySelector(`.play-btn[data-id="${nextSong.id}"]`);
                     if (btn) {
                         isFirstPlay = true; // 新歌曲标记为首次播放
-                        switchToSong(nextSong.id, nextSong.src, nextSong.title, btn);
+                        await switchToSong(nextSong.id, nextSong.src, nextSong.title, btn);
                     }
                 } else {
                     // 没有下一首，重置播放状态
@@ -1227,6 +1403,8 @@
                     updateGlobalButtonState(false);
                     currentPlayingId = null;
                     currentSongSrc = '';
+                    currentSongTitle = '';
+                    stopAudio();
                 }
             }
 
@@ -1235,12 +1413,9 @@
              * @param {HTMLElement} btn - 播放按钮元素
              */
             function resumePlayback(btn) {
-                audioPlayer.play().then(() => {
-                    updateButtonState(btn, true);
-                    updateGlobalButtonState(true);
-                }).catch(err => {
-                    console.error('恢复播放失败:', err);
-                });
+                resumeAudio();
+                updateButtonState(btn, true);
+                updateGlobalButtonState(true);
             }
 
             /**
@@ -1248,7 +1423,7 @@
              * @param {HTMLElement} btn - 播放按钮元素
              */
             function pausePlayback(btn) {
-                audioPlayer.pause();
+                pauseAudio();
                 updateButtonState(btn, false);
                 updateGlobalButtonState(false);
             }
@@ -1354,9 +1529,14 @@
 
                 // 实时搜索 - 当搜索框内容变化时立即执行搜索
                 searchBox.addEventListener('input', performSearch);
-
-                // 音频播放结束时处理，根据播放模式决定下一步操作
-                audioPlayer.addEventListener('ended', playNextSong);
+                
+                // 页面可见性变化时处理
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'visible' && currentPlayingId && !hasUserInteraction) {
+                        // 页面重新可见且没有用户交互时，请求解锁
+                        requestAudioUnlock();
+                    }
+                });
             }
 
             // 初始化
