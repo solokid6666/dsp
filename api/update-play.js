@@ -2,38 +2,38 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// ºó¶Ë½Ó¿Ú£º½ÓÊÕ musicId ²ÎÊı£¬¸üĞÂ¶ÔÓ¦ÒôÀÖµÄ²¥·ÅÁ¿
+// åç«¯æ¥å£ï¼šæ¥æ”¶ musicId å‚æ•°ï¼Œæ›´æ–°å¯¹åº”éŸ³ä¹çš„æ’­æ”¾é‡
 export default async function handler(req, res) {
-    // 1. ´ÓÇëÇóÖĞ»ñÈ¡ÒôÀÖID£¨Ç°¶Ëµ÷ÓÃÊ±´«µİ£¬Èç ?musicId=music_001£©
+    // 1. ä»è¯·æ±‚ä¸­è·å–éŸ³ä¹IDï¼ˆå‰ç«¯è°ƒç”¨æ—¶ä¼ é€’ï¼Œå¦‚ ?musicId=music_001ï¼‰
     const { musicId } = req.query;
 
-    // Ğ£Ñé£ºÈôÎ´´« musicId£¬Ö±½Ó·µ»Ø´íÎó
+    // æ ¡éªŒï¼šè‹¥æœªä¼  musicIdï¼Œç›´æ¥è¿”å›é”™è¯¯
     if (!musicId) {
-        return res.status(400).json({ error: 'Çë´«ÈëÒôÀÖID£¨musicId£©' });
+        return res.status(400).json({ error: 'è¯·ä¼ å…¥éŸ³ä¹IDï¼ˆmusicIdï¼‰' });
     }
 
-    // 2. ¶¨Òå²¥·ÅÁ¿´æ´¢ÎÄ¼şµÄÂ·¾¶
+    // 2. å®šä¹‰æ’­æ”¾é‡å­˜å‚¨æ–‡ä»¶çš„è·¯å¾„
     const playsPath = path.join(process.cwd(), 'music_plays.json');
 
     try {
-        // 3. ¶ÁÈ¡µ±Ç°ËùÓĞÒôÀÖµÄ²¥·ÅÁ¿
+        // 3. è¯»å–å½“å‰æ‰€æœ‰éŸ³ä¹çš„æ’­æ”¾é‡
         const playsData = fs.readFileSync(playsPath, 'utf8');
         const playsObj = JSON.parse(playsData);
 
-        // 4. ÀÛ¼Ó²¥·ÅÁ¿£¨ÈôÒôÀÖID²»´æÔÚ£¬×Ô¶¯³õÊ¼»¯Îª1£©
+        // 4. ç´¯åŠ æ’­æ”¾é‡ï¼ˆè‹¥éŸ³ä¹IDä¸å­˜åœ¨ï¼Œè‡ªåŠ¨åˆå§‹åŒ–ä¸º1ï¼‰
         playsObj[musicId] = playsObj[musicId] ? playsObj[musicId] + 1 : 1;
 
-        // 5. Ğ´Èë¸üĞÂºóµÄ²¥·ÅÁ¿µ½ÎÄ¼ş£¨¸ñÊ½»¯JSON£¬±ãÓÚ²é¿´£©
+        // 5. å†™å…¥æ›´æ–°åçš„æ’­æ”¾é‡åˆ°æ–‡ä»¶ï¼ˆæ ¼å¼åŒ–JSONï¼Œä¾¿äºæŸ¥çœ‹ï¼‰
         fs.writeFileSync(playsPath, JSON.stringify(playsObj, null, 2), 'utf8');
 
-        // 6. Í¨¹ı Git Ìá½»¸üĞÂµ½ GitHub ²Ö¿â£¨È·±£ Vercel ÒÑÊÚÈ¨ GitHub£©
-        execSync('git config --global user.name "ÄãµÄGitHubÓÃ»§Ãû"'); // Ìæ»»ÎªÄãµÄĞÅÏ¢
-        execSync('git config --global user.email "ÄãµÄGitHubÓÊÏä"');   // Ìæ»»ÎªÄãµÄĞÅÏ¢
-        execSync('git add music_plays.json');                          // ½öÌá½»²¥·ÅÁ¿ÎÄ¼ş
-        execSync(`git commit -m "update play count: ${musicId} ¡ú ${playsObj[musicId]}"`);
-        execSync('git push origin main'); // Èô²Ö¿âÄ¬ÈÏ·ÖÖ§ÊÇ master£¬Ìæ»»Îª master
+        // 6. é€šè¿‡ Git æäº¤æ›´æ–°åˆ° GitHub ä»“åº“ï¼ˆç¡®ä¿ Vercel å·²æˆæƒ GitHubï¼‰
+        execSync('git config --global user.name "solokid6666"'); // æ›¿æ¢ä¸ºä½ çš„ä¿¡æ¯
+        execSync('git config --global user.email "1546885688@qq.com"');   // æ›¿æ¢ä¸ºä½ çš„ä¿¡æ¯
+        execSync('git add music_plays.json');                          // ä»…æäº¤æ’­æ”¾é‡æ–‡ä»¶
+        execSync(`git commit -m "update play count: ${musicId} â†’ ${playsObj[musicId]}"`);
+        execSync('git push origin main'); // è‹¥ä»“åº“é»˜è®¤åˆ†æ”¯æ˜¯ masterï¼Œæ›¿æ¢ä¸º master
 
-        // 7. ·µ»Ø¸üĞÂºóµÄ²¥·ÅÁ¿¸øÇ°¶Ë
+        // 7. è¿”å›æ›´æ–°åçš„æ’­æ”¾é‡ç»™å‰ç«¯
         res.status(200).json({
             musicId: musicId,
             currentPlayCount: playsObj[musicId],
@@ -41,10 +41,10 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-        // ²¶»ñ´íÎó£¨ÈçÎÄ¼ş¶ÁÈ¡Ê§°Ü¡¢GitÍÆËÍÊ§°Ü£©
-        console.error('¸üĞÂ²¥·ÅÁ¿Ê§°Ü£º', error);
+        // æ•è·é”™è¯¯ï¼ˆå¦‚æ–‡ä»¶è¯»å–å¤±è´¥ã€Gitæ¨é€å¤±è´¥ï¼‰
+        console.error('æ›´æ–°æ’­æ”¾é‡å¤±è´¥ï¼š', error);
         res.status(500).json({
-            error: '²¥·ÅÁ¿¸üĞÂÊ§°Ü',
+            error: 'æ’­æ”¾é‡æ›´æ–°å¤±è´¥',
             musicId: musicId,
             success: false
         });
