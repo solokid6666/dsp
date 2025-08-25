@@ -1005,11 +1005,16 @@
              * 从后端API获取播放次数
              * @param {string} musicId - 歌曲的musicId
              */
+            
             async function getPlayCountFromAPI(musicId) {
                 try {
-                    const response = await fetch(`/api/update-play?musicId=${musicId}`);
+                    // 改为GET请求，路径更新为/update.plays
+                    const response = await fetch(`/api/update.plays?musicId=${musicId}`, {
+                        method: 'GET',
+                        credentials: 'include' // 增加凭证支持
+                    });
                     const data = await response.json();
-
+            
                     if (data.success) {
                         return data.currentPlayCount;
                     }
@@ -1020,18 +1025,17 @@
                     return 0;
                 }
             }
-
-            /**
-             * 向后端API发送更新播放次数请求
-             * @param {string} musicId - 歌曲的musicId
-             */
+            
+            
             async function updatePlayCountToAPI(musicId) {
                 try {
-                    const response = await fetch(`/api/update-play?musicId=${musicId}`, {
-                        method: 'POST'
+                    // 路径更新为/update.plays，保持POST方法
+                    const response = await fetch(`/api/update.plays?musicId=${musicId}`, {
+                        method: 'POST',
+                        credentials: 'include' // 增加凭证支持
                     });
                     const data = await response.json();
-
+            
                     if (data.success) {
                         return data.currentPlayCount;
                     }
