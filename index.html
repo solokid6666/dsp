@@ -1001,61 +1001,6 @@
                                     `;
             }
 
-            /**
-             * 从后端API获取播放次数
-             * @param {string} musicId - 歌曲的musicId
-             */
-            
-            async function getPlayCountFromAPI(musicId) {
-                try {
-                    // 改为GET请求，路径更新为/update.plays
-                    const response = await fetch(`/api/update.plays?musicId=${musicId}`, {
-                        method: 'GET',
-                        credentials: 'include' // 增加凭证支持
-                    });
-                    const data = await response.json();
-            
-                    if (data.success) {
-                        return data.currentPlayCount;
-                    }
-                    console.error('获取播放次数失败:', data.error);
-                    return 0;
-                } catch (error) {
-                    console.error('获取播放次数时发生错误:', error);
-                    return 0;
-                }
-            }
-            
-            
-            async function updatePlayCountToAPI(musicId) {
-                try {
-                    // 路径更新为/update.plays，保持POST方法
-                    const response = await fetch(`/api/update.plays?musicId=${musicId}`, {
-                        method: 'POST',
-                        credentials: 'include' // 增加凭证支持
-                    });
-                    const data = await response.json();
-            
-                    if (data.success) {
-                        return data.currentPlayCount;
-                    }
-                    console.error('更新播放次数失败:', data.error);
-                    return null;
-                } catch (error) {
-                    console.error('更新播放次数时发生错误:', error);
-                    return null;
-                }
-            }
-
-            /**
-             * 分批并行加载所有歌曲的播放次数
-             */
-            async function batchLoadPlayCounts() {
-                isLoading = true;
-                loadedCount = 0;
-                loadedSongs = [];
-                playCounts = {};
-
                 // 显示初始加载指示器
                 updateLoadingIndicator();
 
