@@ -58,7 +58,7 @@
 
             /* 播放模式按钮样式 */
             .mode-btn {
-                @apply bg-primary/20 text-primary rounded-full w-8 h-8 flex items-center justify-center transition-custom hover:bg-primary/40 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/30;
+                @apply bg-primary/20 text-primary rounded-full w-8 h-8 flex items-center justify-center justify-center transition-custom hover:bg-primary/40 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/30;
             }
 
                 .mode-btn.active {
@@ -73,6 +73,11 @@
                 .sort-btn.active {
                     @apply bg-primary text-white;
                 }
+
+            /* 数据导入导出按钮样式 */
+            .data-btn {
+                @apply bg-primary/10 text-primary px-3 py-1.5 rounded-md text-sm transition-custom hover:bg-primary/20 flex items-center gap-1;
+            }
 
             /* 搜索框样式 */
             .search-box {
@@ -129,6 +134,19 @@
             /* 本地运行提示样式 */
             .local-server-hint {
                 @apply bg-amber-50 text-amber-800 p-4 rounded-lg my-4 text-sm border border-amber-200;
+            }
+
+            /* 数据导入导出区域 */
+            .data-transfer-section {
+                @apply flex gap-4 mb-4 flex-wrap items-center;
+            }
+
+            .file-input-container {
+                @apply relative overflow-hidden;
+            }
+
+            .file-input {
+                @apply absolute top-0 right-0 min-w-full min-h-full text-transparent cursor-pointer opacity-0;
             }
         }
     </style>
@@ -424,6 +442,11 @@
                 width: 100%;
                 margin-left: 0;
             }
+
+            /* 数据导入导出按钮响应式调整 */
+            .data-transfer-section {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -518,6 +541,18 @@
         <h2>音乐播放列表</h2>
         <p>点击下方按钮播放喜欢的音乐</p>
 
+        <!-- 数据导入导出区域 -->
+        <div class="data-transfer-section">
+            <button id="exportDataBtn" class="data-btn" title="导出播放数据">
+                <i class="fa fa-download"></i> 导出播放数据
+            </button>
+            <div class="file-input-container">
+                <button class="data-btn" title="导入播放数据">
+                    <i class="fa fa-upload"></i> 导入播放数据
+                </button>
+                <input type="file" id="importDataInput" class="file-input" accept=".json" title="选择JSON文件">
+            </div>
+        </div>
 
         <!-- 播放模式控制按钮组 - 放置在左上角 -->
         <div class="music-controls">
@@ -656,7 +691,8 @@
                 { id: 16, title: "倾城", src: "songs/倾城.mp3", addTime: 16, musicId: "music-16" },
                 { id: 17, title: "丢手绢", src: "songs/丢手绢.mp3", addTime: 17, musicId: "music-17" },
                 { id: 18, title: "续雪", src: "songs/续雪.mp3", addTime: 18, musicId: "music-18" },
-
+                // 可以在这里添加新歌曲，会自动初始化计数
+                // { id: 19, title: "新歌曲", src: "songs/新歌曲.mp3", addTime: 19, musicId: "music-19" },
             ];
 
             // 播放模式常量
@@ -681,8 +717,57 @@
             // 当前搜索关键词
             let currentSearchTerm = '';
 
-            // 存储所有歌曲的播放次数
-            let playCounts = {};
+            // 存储所有歌曲的播放次数 (使用localStorage存储)
+            let vercount = {};
+
+            // 从本地存储加载播放计数
+            function loadVercount() {
+                try {
+                    const saved = localStorage.getItem('musicPlayCounts');
+                    if (saved) {
+                        return JSON.parse(saved);
+                    }
+                } catch (e) {
+                    console.error('加载播放计数失败:', e);
+                }
+                return {};
+            }
+
+            // 保存播放计数到本地存储
+            function saveVercount() {
+                try {
+                    localStorage.setItem('musicPlayCounts', JSON.stringify(vercount));
+                } catch (e) {
+                    console.error('保存播放计数失败:', e);
+                }
+            }
+
+            // 初始化播放计数，确保新添加的歌曲有初始计数
+            function initVercount() {
+                vercount = loadVercount();
+
+                // 为所有歌曲初始化计数（包括新添加的歌曲）
+                musicData.forEach(song => {
+                    if (vercount[song.id] === undefined) {
+                        vercount[song.id] = 0;
+                    }
+                });
+
+                saveVercount();
+            }
+
+            // 更新播放计数（本地存储）
+            function updateVercount(songId) {
+                if (vercount[songId] !== undefined) {
+                    vercount[songId]++;
+                    saveVercount();
+                    // 更新UI显示
+                    renderMusicList();
+                }
+            }
+
+            // 初始化计数
+            initVercount();
 
             // 加载状态标记
             let isLoading = false;
@@ -720,6 +805,10 @@
             const sortByTimeBtn = document.getElementById('sortByTime');
             const sortByPlaysBtn = document.getElementById('sortByPlays');
 
+            // 数据导入导出按钮
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const importDataInput = document.getElementById('importDataInput');
+
             // 播放状态跟踪变量
             let currentPlayingId = null;
             let currentSongSrc = '';
@@ -736,6 +825,11 @@
                 // 监听播放状态变化
                 audioElement.addEventListener('play', () => {
                     updateButtonStates(true);
+                    // 首次播放时增加vercount计数
+                    if (isFirstPlay && currentPlayingId !== null) {
+                        updateVercount(currentPlayingId);
+                        isFirstPlay = false;
+                    }
                 });
 
                 audioElement.addEventListener('pause', () => {
@@ -930,10 +1024,10 @@
                         return sortedList.sort((a, b) => b.addTime - a.addTime);
 
                     case SORT_MODES.BY_PLAYS:
-                        // 按播放次数排序（播放次数多的在前）
+                        // 按vercount播放次数排序（播放次数多的在前）
                         return sortedList.sort((a, b) => {
-                            const playsA = playCounts[a.id] || 0;
-                            const playsB = playCounts[b.id] || 0;
+                            const playsA = vercount[a.id] || 0;
+                            const playsB = vercount[b.id] || 0;
                             return playsB - playsA;
                         });
 
@@ -975,82 +1069,16 @@
                     const skeleton = document.createElement('div');
                     skeleton.className = 'skeleton-item';
                     skeleton.innerHTML = `
-                                            <div class="flex items-center gap-4">
-                                                <div class="skeleton-avatar"></div>
-                                                <div>
-                                                    <div class="skeleton-text w-40 mb-2"></div>
-                                                    <div class="skeleton-text w-24"></div>
-                                                </div>
-                                            </div>
-                                            <div class="skeleton-button"></div>
-                                        `;
+                            <div class="flex items-center gap-4">
+                                <div class="skeleton-avatar"></div>
+                                <div>
+                                    <div class="skeleton-text w-40 mb-2"></div>
+                                    <div class="skeleton-text w-24"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-button"></div>
+                        `;
                     musicList.appendChild(skeleton);
-                }
-            }
-
-            /**
-             * 显示加载指示器
-             */
-            function updateLoadingIndicator() {
-                const percent = Math.round((loadedCount / musicData.length) * 100);
-                musicList.innerHTML = `
-                                        <div class="loading-indicator">
-                                            <i class="fa fa-spinner fa-spin fa-2x mb-2"></i>
-                                            <p>加载歌曲列表中... ${loadedCount}/${musicData.length} (${percent}%)</p>
-                                        </div>
-                                    `;
-            }
-
-                // 显示初始加载指示器
-                updateLoadingIndicator();
-
-                try {
-                    // 计算需要分多少批
-                    const totalBatches = Math.ceil(musicData.length / MAX_CONCURRENT_REQUESTS);
-
-                    // 分批处理所有歌曲
-                    for (let batch = 0; batch < totalBatches; batch++) {
-                        // 计算当前批次的歌曲范围
-                        const startIndex = batch * MAX_CONCURRENT_REQUESTS;
-                        const endIndex = Math.min(startIndex + MAX_CONCURRENT_REQUESTS, musicData.length);
-                        const batchSongs = musicData.slice(startIndex, endIndex);
-
-                        // 为当前批次的所有歌曲创建并行请求
-                        const promises = batchSongs.map(song =>
-                            getPlayCountFromAPI(song.musicId)
-                                .then(count => ({ song, count }))
-                                .catch(error => {
-                                    console.error(`获取歌曲 ${song.id} 播放次数失败:`, error);
-                                    return { song, count: 0 }; // 失败时默认计数为0
-                                })
-                        );
-
-                        // 等待当前批次所有请求完成
-                        const results = await Promise.all(promises);
-
-                        // 处理当前批次的结果
-                        results.forEach(({ song, count }) => {
-                            playCounts[song.id] = count;
-                            loadedSongs.push({ ...song });
-                            loadedCount++;
-
-                            // 更新加载进度
-                            updateLoadingIndicator();
-                        });
-                    }
-
-                    // 所有批次加载完成后渲染完整列表
-                    renderMusicList();
-                } catch (error) {
-                    console.error('批量加载播放次数失败:', error);
-                    // 失败时使用原始数据，播放次数设为0
-                    loadedSongs = [...musicData];
-                    musicData.forEach(song => {
-                        playCounts[song.id] = 0;
-                    });
-                    renderMusicList();
-                } finally {
-                    isLoading = false;
                 }
             }
 
@@ -1058,315 +1086,251 @@
              * 渲染音乐列表
              */
             function renderMusicList() {
-                // 清空现有列表
-                musicList.innerHTML = '';
+                const filteredList = getSortedAndFilteredList();
 
-                // 获取排序和过滤后的列表
-                const songsToRender = getSortedAndFilteredList();
-
-                // 如果没有匹配的结果，显示提示信息
-                if (songsToRender.length === 0) {
-                    musicList.innerHTML = `
-                                            <div class="no-results">
-                                                <i class="fa fa-search fa-2x mb-2"></i>
-                                                <p>没有找到匹配的歌曲</p>
-                                            </div>
-                                        `;
+                if (filteredList.length === 0) {
+                    musicList.innerHTML = '<div class="no-results"><i class="fa fa-search-minus mr-2"></i>未找到匹配的歌曲</div>';
                     return;
                 }
 
-                // 遍历音乐数据，创建列表项
-                for (const song of songsToRender) {
-                    // 创建音乐条目元素
-                    const musicItem = document.createElement('div');
-                    musicItem.className = 'flex items-center justify-between px-6 py-4 music-item-hover music-item';
-                    musicItem.dataset.id = song.id;
-                    musicItem.dataset.src = song.src;
-                    musicItem.dataset.musicid = song.musicId;
+                musicList.innerHTML = '';
 
-                    // 设置音乐条目内容
-                    musicItem.innerHTML = `
-                                                <div class="flex items-center gap-4">
-                                                    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
-                                                        ${song.id}
-                                                    </div>
-                                                    <div class="song-info">
-                                                        <h3 class="song-title">${song.title}</h3>
-                                                        <span class="play-count" data-id="${song.id}">
-                                                            <i class="fa fa-play-circle-o mr-1"></i>已累计播放${playCounts[song.id] || 0}次
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <button class="play-btn btn-play ${currentPlayingId === song.id ? 'btn-pause' : 'btn-play'}"
-                                                        data-id="${song.id}"
-                                                        data-src="${song.src}"
-                                                        data-title="${song.title}"
-                                                        data-musicid="${song.musicId}"
-                                                        title="${currentPlayingId === song.id ? '暂停' : '播放'} ${song.title}">
-                                                    <i class="fa ${currentPlayingId === song.id ? 'fa-pause' : 'fa-play'}"></i>
-                                                </button>
-                                            `;
+                filteredList.forEach(song => {
+                    const isPlaying = currentPlayingId === song.id && !audioElement.paused;
 
-                    musicList.appendChild(musicItem);
-                }
+                    const item = document.createElement('div');
+                    item.className = `music-item flex items-center justify-between px-6 py-4 music-item-hover ${isPlaying ? 'bg-primary/5' : ''}`;
+                    item.innerHTML = `
+                            <div class="song-info">
+                                <div class="song-title">${song.title}</div>
+                                <div class="play-count">
+                                    <i class="fa fa-play-circle-o mr-1"></i>
+                                    <span>${vercount[song.id] || 0}次播放</span>
+                                </div>
+                            </div>
+                            <button class="play-pause-btn ${isPlaying ? 'btn-pause' : 'btn-play'}"
+                                    data-id="${song.id}"
+                                    data-src="${song.src}"
+                                    data-title="${song.title}"
+                                    data-music-id="${song.musicId}"
+                                    title="${isPlaying ? '暂停' : '播放'}">
+                                <i class="fa ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>
+                            </button>
+                        `;
 
-                // 为所有播放按钮添加点击事件
-                document.querySelectorAll('.play-btn').forEach(btn => {
-                    btn.addEventListener('click', handlePlayButtonClick);
+                    musicList.appendChild(item);
+                });
+
+                // 为播放/暂停按钮添加事件监听
+                document.querySelectorAll('.play-pause-btn').forEach(btn => {
+                    btn.addEventListener('click', handlePlayPauseClick);
                 });
             }
 
             /**
-             * 更新所有按钮状态
-             * @param {boolean} isPlaying - 是否正在播放
+             * 处理播放/暂停按钮点击
+             * @param {Event} e - 点击事件
              */
-            function updateButtonStates(isPlaying) {
-                // 更新全局播放按钮
-                updateGlobalButtonState(isPlaying);
-
-                // 更新当前播放歌曲的按钮
-                if (currentPlayingId) {
-                    const btn = document.querySelector(`.play-btn[data-id="${currentPlayingId}"]`);
-                    if (btn) {
-                        updateButtonState(btn, isPlaying);
-                    }
-                }
-            }
-
-            /**
-             * 处理播放按钮点击事件
-             * @param {Event} e - 点击事件对象
-             */
-            async function handlePlayButtonClick(e) {
+            function handlePlayPauseClick(e) {
                 const btn = e.currentTarget;
-                const songId = parseInt(btn.dataset.id);
-                const songSrc = btn.dataset.src;
-                const songTitle = btn.dataset.title;
-                const musicId = btn.dataset.musicid;
+                const songId = parseInt(btn.getAttribute('data-id'));
+                const songSrc = btn.getAttribute('data-src');
+                const songTitle = btn.getAttribute('data-title');
+                const musicId = btn.getAttribute('data-music-id');
 
-                // 检查是否是当前正在播放的歌曲
+                // 如果点击的是当前正在播放的歌曲，则切换暂停/播放状态
                 if (currentPlayingId === songId) {
-                    // 如果是同一首歌，切换播放/暂停状态
-                    if (!audioElement.paused) {
-                        pausePlayback(btn);
+                    if (audioElement.paused) {
+                        resumeAudio();
                     } else {
-                        resumePlayback(btn);
+                        pauseAudio();
                     }
-                } else {
-                    // 如果是不同的歌曲，切换并从头播放
-                    isFirstPlay = true; // 新歌曲标记为首次播放
-                    await switchToSong(songId, songSrc, songTitle, musicId, btn);
+                    return;
                 }
+
+                // 播放新的歌曲
+                playNewSong(songId, songSrc, songTitle, musicId);
             }
 
             /**
-             * 处理全局播放/暂停按钮点击
-             */
-            async function handleGlobalPlayPause() {
-                if (!currentSongSrc) return; // 没有播放中的歌曲
-
-                const currentBtn = document.querySelector(`.play-btn[data-src="${currentSongSrc}"]`);
-                if (!currentBtn) return;
-
-                // 统一使用相同的播放/暂停逻辑
-                if (!audioElement.paused) {
-                    pausePlayback(currentBtn);
-                } else {
-                    resumePlayback(currentBtn);
-                }
-            }
-
-            /**
-             * 切换到新歌曲（从头播放）
+             * 播放新的歌曲
              * @param {number} songId - 歌曲ID
-             * @param {string} songSrc - 歌曲路径
+             * @param {string} songSrc - 歌曲源URL
              * @param {string} songTitle - 歌曲标题
-             * @param {string} musicId - 歌曲的musicId
-             * @param {HTMLElement} btn - 播放按钮元素
+             * @param {string} musicId - 音乐元素ID
              */
-            async function switchToSong(songId, songSrc, songTitle, musicId, btn) {
-                try {
-                    // 重置之前的播放状态
-                    resetAllPlayButtons();
+            function playNewSong(songId, songSrc, songTitle, musicId) {
+                // 暂停当前播放
+                pauseAudio();
 
-                    // 更新当前播放状态
-                    currentPlayingId = songId;
-                    currentSongSrc = songSrc;
-                    currentSongTitle = songTitle;
-                    currentMusicId = musicId;
+                // 更新当前播放信息
+                currentPlayingId = songId;
+                currentSongSrc = songSrc;
+                currentSongTitle = songTitle;
+                currentMusicId = musicId;
+                isFirstPlay = true;
 
-                    // 显示加载状态
-                    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                // 更新UI
+                currentSong.textContent = songTitle;
+                nowPlaying.classList.remove('hidden');
 
-                    // 设置音频源并加载
-                    audioElement.src = songSrc;
-                    await audioElement.load();
-
-                    // 播放音频
-                    await audioElement.play();
-
-                    // 启动播放状态检查
-                    startPlaybackCheck();
-
-                    // 首次播放时才增加计数
-                    if (isFirstPlay) {
-                        await incrementAndUpdateCount(musicId, songId);
-                        isFirstPlay = false;
-                    }
-
-                    updateButtonState(btn, true);
-                    updateGlobalButtonState(true);
-                    showNowPlaying(songTitle);
-                } catch (err) {
+                // 设置新的歌曲源并播放
+                audioElement.src = songSrc;
+                audioElement.play().catch(err => {
                     console.error('播放失败:', err);
-                    btn.innerHTML = '<i class="fa fa-play"></i>';
-                    // 处理自动播放限制
                     showPlaybackPermissionPrompt();
-                }
+                });
             }
 
             /**
              * 播放下一首歌曲
              */
-            async function playNextSong() {
+            function playNextSong() {
                 const nextSong = getNextSong();
                 if (nextSong) {
-                    const btn = document.querySelector(`.play-btn[data-id="${nextSong.id}"]`);
-                    if (btn) {
-                        isFirstPlay = true; // 新歌曲标记为首次播放
-                        await switchToSong(nextSong.id, nextSong.src, nextSong.title, nextSong.musicId, btn);
-                    }
+                    playNewSong(nextSong.id, nextSong.src, nextSong.title, nextSong.musicId);
                 } else {
-                    // 没有下一首，重置播放状态
-                    resetAllPlayButtons();
-                    updateGlobalButtonState(false);
+                    // 没有下一首了，重置播放状态
                     currentPlayingId = null;
                     currentSongSrc = '';
                     currentSongTitle = '';
                     currentMusicId = '';
-                    audioElement.pause();
-                    audioElement.src = '';
-
-                    // 清除定时器
-                    if (playbackCheckTimer) {
-                        clearInterval(playbackCheckTimer);
-                        playbackCheckTimer = null;
-                    }
+                    nowPlaying.classList.add('hidden');
+                    updateButtonStates(false);
                 }
             }
 
             /**
-             * 恢复播放（继续播放当前位置）
-             * @param {HTMLElement} btn - 播放按钮元素
-             */
-            function resumePlayback(btn) {
-                resumeAudio();
-                updateButtonState(btn, true);
-                updateGlobalButtonState(true);
-            }
-
-            /**
-             * 暂停播放
-             * @param {HTMLElement} btn - 播放按钮元素
-             */
-            function pausePlayback(btn) {
-                pauseAudio();
-                updateButtonState(btn, false);
-                updateGlobalButtonState(false);
-            }
-
-            /**
-             * 增加并更新播放次数
-             * @param {string} musicId - 歌曲的musicId
-             * @param {number} songId - 歌曲ID
-             */
-            async function incrementAndUpdateCount(musicId, songId) {
-                // 防止重复请求
-                if (isCountLoading) return;
-                isCountLoading = true;
-
-                try {
-                    const newCount = await updatePlayCountToAPI(musicId);
-                    if (newCount !== null) {
-                        playCounts[songId] = newCount;
-                        const countElement = document.querySelector(`.play-count[data-id="${songId}"]`);
-                        if (countElement) {
-                            countElement.innerHTML = `<i class="fa fa-play-circle-o mr-1"></i>全站已累计播放${newCount}次`;
-                        }
-
-                        // 如果当前是按播放次数排序，重新渲染列表
-                        if (currentSortMode === SORT_MODES.BY_PLAYS) {
-                            renderMusicList();
-                        }
-                    }
-                } finally {
-                    isCountLoading = false;
-                }
-            }
-
-            /**
-             * 重置所有播放按钮状态
-             */
-            function resetAllPlayButtons() {
-                document.querySelectorAll('.play-btn').forEach(btn => {
-                    // 强制重置为播放状态
-                    btn.classList.remove('btn-pause');
-                    btn.classList.add('btn-play');
-                    btn.innerHTML = '<i class="fa fa-play"></i>';
-                });
-            }
-
-            /**
-             * 更新单个按钮状态
-             * @param {HTMLElement} btn - 按钮元素
+             * 更新按钮状态
              * @param {boolean} isPlaying - 是否正在播放
              */
-            function updateButtonState(btn, isPlaying) {
-                // 先移除所有状态类，避免冲突
-                btn.classList.remove('btn-play', 'btn-pause');
-
+            function updateButtonStates(isPlaying) {
+                // 更新全局播放/暂停按钮
                 if (isPlaying) {
-                    btn.classList.add('btn-pause');
-                    btn.innerHTML = '<i class="fa fa-pause"></i>';
-                } else {
-                    btn.classList.add('btn-play');
-                    btn.innerHTML = '<i class="fa fa-play"></i>';
-                }
-            }
-
-            /**
-             * 更新全局按钮状态
-             * @param {boolean} isPlaying - 是否正在播放
-             */
-            function updateGlobalButtonState(isPlaying) {
-                // 先移除所有状态类，避免冲突
-                globalPlayPause.classList.remove('btn-play', 'btn-pause');
-
-                if (isPlaying) {
+                    globalPlayPause.classList.remove('btn-play');
                     globalPlayPause.classList.add('btn-pause');
                     globalPlayPause.innerHTML = '<i class="fa fa-pause"></i>';
                 } else {
+                    globalPlayPause.classList.remove('btn-pause');
                     globalPlayPause.classList.add('btn-play');
                     globalPlayPause.innerHTML = '<i class="fa fa-play"></i>';
+                }
+
+                // 更新当前播放歌曲的按钮状态
+                if (currentPlayingId) {
+                    renderMusicList(); // 简单粗暴的方式：重新渲染列表以更新按钮状态
                 }
             }
 
             /**
-             * 显示当前播放信息
-             * @param {string} songTitle - 歌曲标题
+             * 加载所有歌曲
              */
-            function showNowPlaying(songTitle) {
-                currentSong.textContent = songTitle;
-                nowPlaying.classList.remove('hidden');
+            function loadAllSongs() {
+                isLoading = true;
+                showSkeletonLoader(musicData.length);
+
+                // 简单处理：直接使用音乐数据，不实际预加载音频文件
+                setTimeout(() => {
+                    loadedSongs = [...musicData];
+                    isLoading = false;
+                    renderMusicList();
+                }, 500);
             }
 
             /**
-             * 初始化事件监听
+             * 导出播放数据
              */
-            function initEventListeners() {
-                // 全局播放/暂停按钮事件
-                globalPlayPause.addEventListener('click', handleGlobalPlayPause);
+            function exportPlayData() {
+                // 创建要导出的数据对象
+                const exportData = {
+                    vercount: vercount,
+                    exportTime: new Date().toISOString(),
+                    app: "DSP Figure Making",
+                    version: "1.0"
+                };
 
+                // 转换为JSON字符串
+                const jsonData = JSON.stringify(exportData, null, 2);
+
+                // 创建Blob对象
+                const blob = new Blob([jsonData], { type: 'application/json' });
+
+                // 创建下载链接
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dsp_music_data.json`;
+
+                // 触发下载
+                document.body.appendChild(a);
+                a.click();
+
+                // 清理
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+
+                alert('播放数据已导出成功！');
+            }
+
+            /**
+             * 导入播放数据
+             * @param {File} file - 要导入的JSON文件
+             */
+            function importPlayData(file) {
+                if (!file) {
+                    alert('请选择一个JSON文件');
+                    return;
+                }
+
+                // 验证文件类型
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    alert('请选择一个JSON格式的文件');
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    try {
+                        // 解析JSON数据
+                        const importData = JSON.parse(e.target.result);
+
+                        // 验证数据结构
+                        if (!importData.vercount) {
+                            throw new Error('无效的数据格式，缺少播放计数信息');
+                        }
+
+                        // 确认是否覆盖现有数据
+                        if (confirm('确定要导入播放数据吗？这将覆盖当前的播放计数记录。')) {
+                            // 更新播放计数
+                            vercount = importData.vercount;
+
+                            // 保存到本地存储
+                            saveVercount();
+
+                            // 重新渲染列表以显示更新后的数据
+                            renderMusicList();
+
+                            alert('播放数据导入成功！');
+                        }
+                    } catch (error) {
+                        console.error('导入数据失败:', error);
+                        alert(`导入失败: ${error.message}`);
+                    }
+                };
+
+                reader.onerror = function () {
+                    alert('读取文件时发生错误');
+                };
+
+                // 读取文件内容
+                reader.readAsText(file);
+            }
+
+            // 初始化事件监听
+            function initEventListeners() {
                 // 播放模式按钮事件
                 orderPlayBtn.addEventListener('click', () => setPlayMode(PLAY_MODES.ORDER));
                 singleLoopBtn.addEventListener('click', () => setPlayMode(PLAY_MODES.SINGLE_LOOP));
@@ -1376,41 +1340,44 @@
                 sortByTimeBtn.addEventListener('click', () => setSortMode(SORT_MODES.BY_TIME));
                 sortByPlaysBtn.addEventListener('click', () => setSortMode(SORT_MODES.BY_PLAYS));
 
-                // 搜索按钮和回车键事件
+                // 搜索事件
                 searchBtn.addEventListener('click', performSearch);
-                searchBox.addEventListener('keydown', (e) => {
+                searchBox.addEventListener('keyup', (e) => {
                     if (e.key === 'Enter') {
-                        e.preventDefault();
                         performSearch();
                     }
                 });
 
-                // 实时搜索 - 当搜索框内容变化时立即执行搜索
-                searchBox.addEventListener('input', performSearch);
-
-                // 监听页面可见性变化
-                document.addEventListener('visibilitychange', () => {
-                    // 当页面重新可见且有当前播放歌曲时
-                    if (!document.hidden && currentSongSrc && audioElement.paused) {
-                        // 检查是否应该继续播放
-                        if (audioElement.currentTime > 0 && audioElement.currentTime < audioElement.duration - 1) {
-                            // 尝试恢复播放
+                // 全局播放/暂停按钮事件
+                globalPlayPause.addEventListener('click', () => {
+                    if (currentSongSrc) {
+                        if (audioElement.paused) {
                             resumeAudio();
+                        } else {
+                            pauseAudio();
                         }
                     }
                 });
+
+                // 数据导入导出事件
+                exportDataBtn.addEventListener('click', exportPlayData);
+                importDataInput.addEventListener('change', (e) => {
+                    importPlayData(e.target.files[0]);
+                    // 重置输入，允许重复选择同一文件
+                    e.target.value = '';
+                });
             }
 
-            // 初始化
-            function init() {
+            // 初始化播放器
+            function initMusicPlayer() {
                 initAudioElement();
+                startPlaybackCheck();
                 initEventListeners();
-                // 批量并行加载所有歌曲的播放次数
-                batchLoadPlayCounts();
+                loadAllSongs();
             }
 
-            // 启动初始化
-            init();
+            // 启动音乐播放器
+            initMusicPlayer();
         });
     </script>
 </body>
