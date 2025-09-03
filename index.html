@@ -8,6 +8,7 @@
     <!-- 引入外部资源 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script defer src="https://events.vercount.one/js"></script>
 
     <!-- Tailwind 配置 - 保持与原有样式色调一致 -->
     <script>
@@ -486,6 +487,14 @@
             <p>您的浏览器不支持HTML5视频</p>
         </video>
     </div>
+
+    
+    <div class="flex justify-center items-center pr-6 py-2 text-sm text-gray-500">
+        <i class="fa fa-eye mr-2"></i>
+        <span>总访问量：</span>
+        <span id="vercount_value_page_pv" class="ml-1">Loading</span>
+    </div>
+    
 
     <!-- 视频下载区域 -->
     <div class="content-section">
