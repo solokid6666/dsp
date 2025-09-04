@@ -681,36 +681,51 @@
             // ===== 音乐播放器相关代码 =====
             // 音乐数据 - 使用数字作为addtime值，数字越大表示添加时间越晚
             const musicData = [
-                { id: 1, title: "王子归来", src: "songs/王子归来.mp3", addTime: 1, musicId: "music-1" },   // 较早添加
-                { id: 2, title: "认真的雪", src: "songs/认真的雪.mp3", addTime: 2, musicId: "music-2" },
-                { id: 3, title: "红尘女子", src: "songs/红尘女子.mp3", addTime: 3, musicId: "music-3" },
-                { id: 4, title: "爱不走", src: "songs/爱不走.mp3", addTime: 4, musicId: "music-4" },
-                { id: 5, title: "快乐帮", src: "songs/快乐帮.mp3", addTime: 5, musicId: "music-5" },
-                { id: 6, title: "我的Show", src: "songs/我的Show.mp3", addTime: 6, musicId: "music-6" },       // 较晚添加
-                { id: 7, title: "黄色枫叶", src: "songs/黄色枫叶.mp3", addTime: 7, musicId: "music-7" },
-                { id: 8, title: "钗头凤", src: "songs/钗头凤.mp3", addTime: 8, musicId: "music-8" },    // 较晚添加
-                { id: 9, title: "Memory", src: "songs/Memory.mp3", addTime: 9, musicId: "music-9" },
+                { id: 1, title: "王子归来", src: "songs/王子归来.mp3"},   // 较早添加
+                { id: 2, title: "认真的雪", src: "songs/认真的雪.mp3"},
+                { id: 3, title: "红尘女子", src: "songs/红尘女子.mp3"},
+                { id: 4, title: "爱不走", src: "songs/爱不走.mp3"},
+                { id: 5, title: "快乐帮", src: "songs/快乐帮.mp3"},
+                { id: 6, title: "我的Show", src: "songs/我的Show.mp3"},       // 较晚添加
+                { id: 7, title: "黄色枫叶", src: "songs/黄色枫叶.mp3"},
+                { id: 8, title: "钗头凤", src: "songs/钗头凤.mp3"},    // 较晚添加
+                { id: 9, title: "Memory", src: "songs/Memory.mp3"},
 
-                { id: 10, title: "苏黎世的从前", src: "songs/苏黎世的从前.mp3", addTime: 10, musicId: "music-10" },
-                { id: 11, title: "你过得好吗", src: "songs/你过得好吗.mp3", addTime: 11, musicId: "music-11" },
-                { id: 12, title: "爱情宣判", src: "songs/爱情宣判.mp3", addTime: 12, musicId: "music-12" },
-                { id: 13, title: "朋友你们还好吗", src: "songs/朋友你们还好吗.mp3", addTime: 13, musicId: "music-13" },
-                { id: 14, title: "爱的期限", src: "songs/爱的期限.mp3", addTime: 14, musicId: "music-14" },
-                { id: 15, title: "马戏小丑", src: "songs/马戏小丑.mp3", addTime: 15, musicId: "music-15" },
-                { id: 16, title: "倾城", src: "songs/倾城.mp3", addTime: 16, musicId: "music-16" },
-                { id: 17, title: "丢手绢", src: "songs/丢手绢.mp3", addTime: 17, musicId: "music-17" },
-                { id: 18, title: "续雪", src: "songs/续雪.mp3", addTime: 18, musicId: "music-18" },
+                { id: 10, title: "苏黎世的从前", src: "songs/苏黎世的从前.mp3"},
+                { id: 11, title: "你过得好吗", src: "songs/你过得好吗.mp3"},
+                { id: 12, title: "爱情宣判", src: "songs/爱情宣判.mp3"},
+                { id: 13, title: "朋友你们还好吗", src: "songs/朋友你们还好吗.mp3"},
+                { id: 14, title: "爱的期限", src: "songs/爱的期限.mp3"},
+                { id: 15, title: "马戏小丑", src: "songs/马戏小丑.mp3"},
+                { id: 16, title: "倾城", src: "songs/倾城.mp3"},
+                { id: 17, title: "丢手绢", src: "songs/丢手绢.mp3"},
+                { id: 18, title: "续雪", src: "songs/续雪.mp3"},
 
-                { id: 19, title: "传说", src: "songs/传说.mp3", addTime: 19, musicId: "music-19" },
-                { id: 20, title: "深深爱过你(前世)", src: "songs/深深爱过你(前世).mp3", addTime: 20, musicId: "music-20" },
-                { id: 21, title: "深深爱过你(今生)", src: "songs/深深爱过你(今生).mp3", addTime: 21, musicId: "music-21" },
-                { id: 22, title: "Let You Go", src: "songs/Let You Go.mp3", addTime: 22, musicId: "music-22" },
-                { id: 23, title: "给我的爱人", src: "songs/给我的爱人.mp3", addTime: 23, musicId: "music-23" },
-                { id: 24, title: "我们的世界", src: "songs/我们的世界.mp3", addTime: 24, musicId: "music-24" },
-                { id: 25, title: "流星的眼泪", src: "songs/流星的眼泪.mp3", addTime: 25, musicId: "music-25" },
-                { id: 26, title: "星河之役", src: "songs/星河之役.mp3", addTime: 26, musicId: "music-26" },
-                { id: 27, title: "梦开始的原点", src: "songs/梦开始的原点.mp3", addTime: 27, musicId: "music-27" },
+                { id: 19, title: "传说", src: "songs/传说.mp3"},
+                { id: 20, title: "深深爱过你(前世)", src: "songs/深深爱过你(前世).mp3"},
+                { id: 21, title: "深深爱过你(今生)", src: "songs/深深爱过你(今生).mp3"},
+                { id: 22, title: "Let You Go", src: "songs/Let You Go.mp3"},
+                { id: 23, title: "给我的爱人", src: "songs/给我的爱人.mp3"},
+                { id: 24, title: "我们的世界", src: "songs/我们的世界.mp3"},
+                { id: 25, title: "流星的眼泪", src: "songs/流星的眼泪.mp3"},
+                { id: 26, title: "星河之役", src: "songs/星河之役.mp3"},
+                { id: 27, title: "梦开始的原点", src: "songs/梦开始的原点.mp3"},
 
+                { id: 28, title: "未完成的歌", src: "songs/未完成的歌.mp3" },
+                { id: 29, title: "我的雅典娜", src: "songs/我的雅典娜.mp3" },
+                { id: 30, title: "爱我的人 谢谢你", src: "songs/爱我的人 谢谢你.mp3" },
+
+                { id: 31, title: "我知道你都知道", src: "songs/我知道你都知道.mp3" },
+                { id: 32, title: "几个你", src: "songs/几个你.mp3" },
+                { id: 33, title: "伏笔", src: "songs/伏笔.mp3" },
+                { id: 34, title: "为什么", src: "songs/为什么.mp3" },
+                { id: 35, title: "我终于成了别人的女人", src: "songs/我终于成了别人的女人.mp3" },
+                { id: 36, title: "敷衍", src: "songs/敷衍.mp3" },
+                { id: 37, title: "我们爱过就好", src: "songs/我们爱过就好.mp3" },
+                { id: 38, title: "楚河汉界", src: "songs/楚河汉界.mp3" },
+                { id: 39, title: "为了遇见你", src: "songs/为了遇见你.mp3" },
+
+                { id: 40, title: "丑八怪", src: "songs/丑八怪.mp3" },
 
                 // 可以在这里添加新歌曲，会自动初始化计数
                 // { id: 19, title: "新歌曲", src: "songs/新歌曲.mp3", addTime: 19, musicId: "music-19" },
@@ -1042,7 +1057,7 @@
                 switch (sortMode) {
                     case SORT_MODES.BY_TIME:
                         // 按添加时间倒序排序（数字越大越新，排在前面）
-                        return sortedList.sort((a, b) => b.addTime - a.addTime);
+                        return sortedList.sort((a, b) => b.id - a.id);
 
                     case SORT_MODES.BY_PLAYS:
                         // 按vercount播放次数排序（播放次数多的在前）
