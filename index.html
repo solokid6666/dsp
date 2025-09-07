@@ -54,7 +54,7 @@
             }
 
             .btn-pause {
-                @apply bg-secondary text-white rounded-full w-10 h-10 flex items-center justify-center transition-custom hover:bg-primary hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary/50;
+                @apply bg-secondary text-white rounded-full w-10 h-10 flex items-center justify justify justify-center transition-custom hover:bg-primary hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary/50;
             }
 
             /* 播放模式按钮样式 */
@@ -618,11 +618,30 @@
     <script>
         // ===== 信件和复制功能相关代码 =====
         document.addEventListener('DOMContentLoaded', function () {
+            // 确保DOM元素已加载
+            const orderPlayBtn = document.getElementById('orderPlay');
+            const singleLoopBtn = document.getElementById('singleLoop');
+            const randomPlayBtn = document.getElementById('randomPlay');
+            const sortByTimeBtn = document.getElementById('sortByTime');
+            const sortByPlaysBtn = document.getElementById('sortByPlays');
+            const searchBox = document.getElementById('searchBox');
+            const searchBtn = document.getElementById('searchBtn');
+            const globalPlayPause = document.getElementById('globalPlayPause');
+            const musicList = document.getElementById('musicList');
+            const nowPlaying = document.getElementById('nowPlaying');
+            const currentSong = document.getElementById('currentSong');
+            
+            // 确保所有必要元素都已找到
+            if (!musicList) {
+                console.error('音乐列表容器未找到');
+                return;
+            }
+
             // 网址复制功能
             document.getElementById('copyBtn').addEventListener('click', function () {
                 const text = 'https://solokid6666.github.io/dsp/';
                 // 使用Clipboard API复制文本
-                navigatorigator.clipboard.writeText(text)
+                navigator.clipboard.writeText(text)
                     .then(function () {
                         alert('复制成功成功');
                     })
@@ -681,7 +700,7 @@
             // ===== 音乐播放器播放器相关代码 =====
             // 音乐数据 - 使用数字作为addtime值，数字越大表示添加时间越晚
             const musicData = [
-                { id: 1, title: "王子子归来", src: "songs/王子归来.mp3"},   // 较早添加
+                { id: 1, title: "王子归来", src: "songs/王子归来.mp3"},   // 较早添加
                 { id: 2, title: "认真的雪", src: "songs/认真的雪.mp3"},
                 { id: 3, title: "红尘女子", src: "songs/红尘女子.mp3"},
                 { id: 4, title: "爱不走", src: "songs/爱不走.mp3"},
@@ -695,7 +714,7 @@
                 { id: 11, title: "你过得好吗", src: "songs/你过得得好吗.mp3"},
                 { id: 12, title: "爱情宣判", src: "songs/爱情宣判.mp3"},
                 { id: 13, title: "朋友你们还好好吗", src: "songs/朋友你们还好吗.mp3"},
-                { id: 14, title: "爱的的期限", src: "songs/爱的期限.mp3"},
+                { id: 14, title: "爱的期限", src: "songs/爱的期限.mp3"},
                 { id: 15, title: "马戏小丑", src: "songs/马戏小丑.mp3"},
                 { id: 16, title: "倾城", src: "songs/倾城.mp3"},
                 { id: 17, title: "丢手绢", src: "songs/丢手绢.mp3"},
@@ -1229,7 +1248,7 @@
                                     data-id="${song.id}"
                                     data-src="${song.src}"
                                     data-title="${song.title}"
-                                    data-music-id="${song.musicId}"
+                                    data-music-id="${song.musicId || song.id}"
                                     title="${isPlaying ? '暂停' : '播放'}">
                                 <i class="fa ${isPlaying ? 'fa-pause' : 'fa-play'}"></i>
                             </button>
@@ -1517,6 +1536,14 @@
 
             // 初始化播放器
             function initMusicPlayer() {
+                // 确保所有DOM元素都已正确加载
+                if (!orderPlayBtn || !singleLoopBtn || !randomPlayBtn || 
+                    !sortByTimeBtn || !sortByPlaysBtn || !searchBox || 
+                    !searchBtn || !globalPlayPause || !musicList) {
+                    console.error('部分音乐播放器元素未找到');
+                    return;
+                }
+                
                 initAudioContext();
                 initAudioElement();
                 initEventListeners();
