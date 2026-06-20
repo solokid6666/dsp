@@ -1420,7 +1420,7 @@
     <button class="back-top" id="backTop" title="返回顶部"><i class="fa fa-chevron-up"></i></button>
 
     <!-- ============================================================ -->
-    <!-- JavaScript -->
+    <!-- JavaScript（已修复 URL 协议） -->
     <!-- ============================================================ -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1428,11 +1428,15 @@
             // =============================================================
             // 0. GitHub 配置区（通过 Cloudflare Worker 代理）
             // =============================================================
-            // 请替换为你的 Cloudflare Worker 实际域名
-            const WORKER_URL = 'summer-mode-77bd.1546885688.workers.dev';
+            // 修改：明确添加 https:// 协议
+            const WORKER_URL = 'https://summer-mode-77bd.1546885688.workers.dev';
             const REPO_OWNER = 'solokid6666';
             const REPO_NAME = 'dsp';
             const ISSUE_NUMBER = 1;
+
+            // 构建 API 基础 URL
+            const API_BASE = `${WORKER_URL}/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
+            console.log('🌐 API_BASE =', API_BASE); // 调试：打印请求 URL
 
             // =============================================================
             // 1. 音乐数据
@@ -1562,34 +1566,35 @@
             // =============================================================
             // 2. GitHub API 辅助函数（通过 Worker 代理）
             // =============================================================
-            const API_BASE = `${WORKER_URL}/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
 
             async function fetchComments() {
+                console.log('📡 GET', API_BASE);
                 const res = await fetch(API_BASE, {
                     headers: {
                         'Accept': 'application/vnd.github.v3+json'
-                        // 不再需要 Authorization，Worker 会自动添加
                     }
                 });
                 if (!res.ok) {
                     const err = await res.text();
+                    console.error('❌ GET 失败:', res.status, err);
                     throw new Error(`GitHub API error ${res.status}: ${err}`);
                 }
                 return res.json();
             }
 
             async function addComment(body) {
+                console.log('📡 POST', API_BASE);
                 const res = await fetch(API_BASE, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
-                        // 不再需要 Authorization，Worker 会自动添加
                     },
                     body: JSON.stringify({ body })
                 });
                 if (!res.ok) {
                     const err = await res.text();
+                    console.error('❌ POST 失败:', res.status, err);
                     throw new Error(`GitHub API error ${res.status}: ${err}`);
                 }
                 return res.json();
@@ -1598,7 +1603,7 @@
             // =============================================================
             // 3. 播放计数统计（从 GitHub 读取）
             // =============================================================
-            let playCounts = {}; // { songId: count }
+            let playCounts = {};
             let isLoadingStats = false;
 
             async function loadStatsFromGitHub() {
@@ -1606,7 +1611,6 @@
                 isLoadingStats = true;
                 try {
                     const comments = await fetchComments();
-                    // 只解析以 "play|" 开头的评论
                     const counts = {};
                     comments.forEach(c => {
                         const body = c.body || '';
@@ -1623,7 +1627,6 @@
                     playCounts = counts;
                 } catch (e) {
                     console.warn('加载播放统计失败:', e);
-                    // 保持原有计数（可能为空）
                 } finally {
                     isLoadingStats = false;
                 }
@@ -1631,7 +1634,7 @@
             }
 
             // =============================================================
-            // 4. 记录播放（新增一条评论）
+            // 4. 记录播放
             // =============================================================
             const USER_ID = localStorage.getItem('uid') || 'user_' + Date.now();
             localStorage.setItem('uid', USER_ID);
@@ -1642,9 +1645,7 @@
                     await addComment(body);
                 } catch (e) {
                     console.error('记录播放失败:', e);
-                    // 可提示用户，但不影响播放
                 }
-                // 重新加载统计
                 await loadStatsFromGitHub();
             }
 
@@ -1979,16 +1980,16 @@
                     const playing = (s.id === currentId && isPlaying) ? 'playing' : '';
                     const plays = playCounts[s.id] || 0;
                     html += `
-                                        <div class="song-item ${active}" data-id="${s.id}">
-                                            <div class="info">
-                                                <span class="title">${s.title}</span>
-                                                <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                            <div class="song-item ${active}" data-id="${s.id}">
+                                                <div class="info">
+                                                    <span class="title">${s.title}</span>
+                                                    <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                                </div>
+                                                <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
+                                                    <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
+                                                </button>
                                             </div>
-                                            <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
-                                                <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
-                                            </button>
-                                        </div>
-                                    `;
+                                        `;
                 });
                 songListEl.innerHTML = html;
                 songListEl.querySelectorAll('.btn-play').forEach(btn => {
@@ -2314,6 +2315,10 @@
                 fpLyrics.style.display = 'none';
             }
 
+            // 加载统计
+            loadStatsFromGitHub();
+            setInterval(loadStatsFromGitHub, 60000);
+            console.log('🎵 DSP 已启动（通过 Cloudflare Worker 代理）');
             // 初始加载统计
             loadStatsFromGitHub().then(() => {
                 renderList();
