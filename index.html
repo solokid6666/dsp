@@ -1426,12 +1426,13 @@
         document.addEventListener('DOMContentLoaded', function () {
 
             // =============================================================
-            // 0. GitHub 配置区（修改这里！）
+            // 0. GitHub 配置区（通过 Cloudflare Worker 代理）
             // =============================================================
-            const GITHUB_TOKEN = 'GITHUB_TOKEN_PLACEHOLDER';
+            // 请替换为你的 Cloudflare Worker 实际域名
+            const WORKER_URL = 'summer-mode-77bd.1546885688.workers.dev';
             const REPO_OWNER = 'solokid6666';
             const REPO_NAME = 'dsp';
-            const ISSUE_NUMBER = 1;                  // 你创建的 Issue 编号
+            const ISSUE_NUMBER = 1;
 
             // =============================================================
             // 1. 音乐数据
@@ -1559,15 +1560,15 @@
             ];
 
             // =============================================================
-            // 2. GitHub API 辅助函数
+            // 2. GitHub API 辅助函数（通过 Worker 代理）
             // =============================================================
-            const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
+            const API_BASE = `${WORKER_URL}/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
 
             async function fetchComments() {
                 const res = await fetch(API_BASE, {
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json'
+                        // 不再需要 Authorization，Worker 会自动添加
                     }
                 });
                 if (!res.ok) {
@@ -1581,9 +1582,9 @@
                 const res = await fetch(API_BASE, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
+                        // 不再需要 Authorization，Worker 会自动添加
                     },
                     body: JSON.stringify({ body })
                 });
@@ -1978,16 +1979,16 @@
                     const playing = (s.id === currentId && isPlaying) ? 'playing' : '';
                     const plays = playCounts[s.id] || 0;
                     html += `
-                                    <div class="song-item ${active}" data-id="${s.id}">
-                                        <div class="info">
-                                            <span class="title">${s.title}</span>
-                                            <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                        <div class="song-item ${active}" data-id="${s.id}">
+                                            <div class="info">
+                                                <span class="title">${s.title}</span>
+                                                <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                            </div>
+                                            <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
+                                                <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
+                                            </button>
                                         </div>
-                                        <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
-                                            <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
-                                        </button>
-                                    </div>
-                                `;
+                                    `;
                 });
                 songListEl.innerHTML = html;
                 songListEl.querySelectorAll('.btn-play').forEach(btn => {
@@ -2321,7 +2322,7 @@
             // 自动刷新（每60秒）
             setInterval(loadStatsFromGitHub, 60000);
 
-            console.log('🎵 DSP 已启动（GitHub 驱动）');
+            console.log('🎵 DSP 已启动（通过 Cloudflare Worker 代理）');
         });
     </script>
 
