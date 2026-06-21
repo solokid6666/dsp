@@ -1370,7 +1370,7 @@
             </div>
         </div>
 
-        <!-- 留言板抽屉（替代信件） -->
+        <!-- 留言板抽屉 -->
         <div class="drawer" id="drawerMessage">
             <div class="drawer-header" data-toggle="drawerMessage">
                 <div class="left"><i class="fa fa-commenting" style="color:#4a69bd;"></i> 留言板</div>
@@ -1420,7 +1420,7 @@
     <button class="back-top" id="backTop" title="返回顶部"><i class="fa fa-chevron-up"></i></button>
 
     <!-- ============================================================ -->
-    <!-- JavaScript（已修复 URL 协议） -->
+    <!-- JavaScript -->
     <!-- ============================================================ -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1428,15 +1428,13 @@
             // =============================================================
             // 0. GitHub 配置区（通过 Cloudflare Worker 代理）
             // =============================================================
-            // 修改：明确添加 https:// 协议
             const WORKER_URL = 'https://summer-mode-77bd.1546885688.workers.dev';
             const REPO_OWNER = 'solokid6666';
             const REPO_NAME = 'dsp';
             const ISSUE_NUMBER = 1;
 
-            // 构建 API 基础 URL
             const API_BASE = `${WORKER_URL}/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
-            console.log('🌐 API_BASE =', API_BASE); // 调试：打印请求 URL
+            console.log('🌐 API_BASE =', API_BASE);
 
             // =============================================================
             // 1. 音乐数据
@@ -1980,16 +1978,16 @@
                     const playing = (s.id === currentId && isPlaying) ? 'playing' : '';
                     const plays = playCounts[s.id] || 0;
                     html += `
-                                            <div class="song-item ${active}" data-id="${s.id}">
-                                                <div class="info">
-                                                    <span class="title">${s.title}</span>
-                                                    <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                                <div class="song-item ${active}" data-id="${s.id}">
+                                                    <div class="info">
+                                                        <span class="title">${s.title}</span>
+                                                        <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                                    </div>
+                                                    <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
+                                                        <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
+                                                    </button>
                                                 </div>
-                                                <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
-                                                    <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
-                                                </button>
-                                            </div>
-                                        `;
+                                            `;
                 });
                 songListEl.innerHTML = html;
                 songListEl.querySelectorAll('.btn-play').forEach(btn => {
@@ -2021,11 +2019,9 @@
                 try {
                     await audio.play();
                     isPlaying = true;
-                    // 记录播放到 GitHub
                     await recordPlay(id, title);
                     updateUI();
                 } catch (e) {
-                    // 播放失败（如用户未交互）
                     console.warn('播放失败:', e);
                 }
                 updateUI();
@@ -2213,8 +2209,9 @@
 
             toggleLyricsBtn.addEventListener('click', toggleLyrics);
 
+            // ★★★ 修复：全局键盘事件中排除 TEXTAREA ★★★
             document.addEventListener('keydown', function (e) {
-                if (e.target.tagName === 'INPUT') return;
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
                 if (e.code === 'Space') {
                     e.preventDefault();
                     togglePlay();
@@ -2315,18 +2312,8 @@
                 fpLyrics.style.display = 'none';
             }
 
-            // 加载统计
             loadStatsFromGitHub();
             setInterval(loadStatsFromGitHub, 60000);
-            console.log('🎵 DSP 已启动（通过 Cloudflare Worker 代理）');
-            // 初始加载统计
-            loadStatsFromGitHub().then(() => {
-                renderList();
-            });
-
-            // 自动刷新（每60秒）
-            setInterval(loadStatsFromGitHub, 60000);
-
             console.log('🎵 DSP 已启动（通过 Cloudflare Worker 代理）');
         });
     </script>
