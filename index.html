@@ -1549,7 +1549,7 @@
     <button class="back-top" id="backTop" title="返回顶部"><i class="fa fa-chevron-up"></i></button>
 
     <!-- ============================================================ -->
-    <!-- JavaScript（优化版 + 信件功能） -->
+    <!-- JavaScript（音乐数据从外部 JSON 加载） -->
     <!-- ============================================================ -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -1582,133 +1582,9 @@
                 playCounts: {},
                 isLoadingStats: false,
                 userId: localStorage.getItem('uid') || 'user_' + Date.now(),
+                musicData: [],   // ← 存放从 JSON 加载的音乐数据
             };
             localStorage.setItem('uid', state.userId);
-
-            // =============================================================
-            // 音乐数据
-            // =============================================================
-            const musicData = [
-                { id: 1, title: "王子归来", src: "songs/王子归来.mp3" },
-                { id: 2, title: "认真的雪", src: "songs/认真的雪.mp3" },
-                { id: 3, title: "红尘女子", src: "songs/红尘女子.mp3" },
-                { id: 4, title: "爱不走", src: "songs/爱不走.mp3" },
-                { id: 5, title: "快乐帮", src: "songs/快乐帮.mp3" },
-                { id: 6, title: "我的Show", src: "songs/我的Show.mp3" },
-                { id: 7, title: "黄色枫叶", src: "songs/黄色枫叶.mp3" },
-                { id: 8, title: "钗头凤", src: "songs/钗头凤.mp3" },
-                { id: 9, title: "Memory", src: "songs/Memory.mp3" },
-                { id: 10, title: "苏黎世的从前", src: "songs/苏黎世的从前.mp3" },
-                { id: 11, title: "你过得好吗", src: "songs/你过得好吗.mp3" },
-                { id: 12, title: "爱情宣判", src: "songs/爱情宣判.mp3" },
-                { id: 13, title: "朋友你们还好吗", src: "songs/朋友你们还好吗.mp3" },
-                { id: 14, title: "爱的期限", src: "songs/爱的期限.mp3" },
-                { id: 15, title: "马戏小丑", src: "songs/马戏小丑.mp3" },
-                { id: 16, title: "倾城", src: "songs/倾城.mp3" },
-                { id: 17, title: "丢手绢", src: "songs/丢手绢.mp3" },
-                { id: 18, title: "续雪", src: "songs/续雪.mp3" },
-                { id: 19, title: "传说", src: "songs/传说.mp3" },
-                { id: 20, title: "深深爱过你(前世)", src: "songs/深深爱过你(前世).mp3" },
-                { id: 21, title: "深深爱过你(今生)", src: "songs/深深爱过你(今生).mp3" },
-                { id: 22, title: "Let You Go", src: "songs/Let You Go.mp3" },
-                { id: 23, title: "给我的爱人", src: "songs/给我的爱人.mp3" },
-                { id: 24, title: "我们的世界", src: "songs/我们的世界.mp3" },
-                { id: 25, title: "流星的眼泪", src: "songs/流星的眼泪.mp3" },
-                { id: 26, title: "星河之役", src: "songs/星河之役.mp3" },
-                { id: 27, title: "梦开始的原点", src: "songs/梦开始的原点.mp3" },
-                { id: 28, title: "未完成的歌", src: "songs/未完成的歌.mp3" },
-                { id: 29, title: "我的雅典娜", src: "songs/我的雅典娜.mp3" },
-                { id: 30, title: "爱我的人 谢谢你", src: "songs/爱我的人 谢谢你.mp3" },
-                { id: 31, title: "我知道你都知道", src: "songs/我知道你都知道.mp3" },
-                { id: 32, title: "几个你", src: "songs/几个你.mp3" },
-                { id: 33, title: "伏笔", src: "songs/伏笔.mp3" },
-                { id: 34, title: "为什么", src: "songs/为什么.mp3" },
-                { id: 35, title: "我终于成了别人的女人", src: "songs/我终于成了别人的女人.mp3" },
-                { id: 36, title: "敷衍", src: "songs/敷衍.mp3" },
-                { id: 37, title: "我们爱过就好", src: "songs/我们爱过就好.mp3" },
-                { id: 38, title: "楚河汉界", src: "songs/楚河汉界.mp3" },
-                { id: 39, title: "为了遇见你", src: "songs/为了遇见你.mp3" },
-                { id: 40, title: "丑八怪", src: "songs/丑八怪.mp3" },
-                { id: 41, title: "意外", src: "songs/意外.mp3" },
-                { id: 42, title: "你还要我怎样", src: "songs/你还要我怎样.mp3" },
-                { id: 43, title: "有没有", src: "songs/有没有.mp3" },
-                { id: 44, title: "潮流季", src: "songs/潮流季.mp3" },
-                { id: 45, title: "等我回家", src: "songs/等我回家.mp3" },
-                { id: 46, title: "我想起你了", src: "songs/我想起你了.mp3" },
-                { id: 47, title: "其实", src: "songs/其实.mp3" },
-                { id: 48, title: "方圆几里", src: "songs/方圆几里.mp3" },
-                { id: 49, title: "方圆几里(吉他版)", src: "songs/方圆几里(吉他版).mp3" },
-                { id: 50, title: "初学者", src: "songs/初学者.mp3" },
-                { id: 51, title: "刚刚好", src: "songs/刚刚好.mp3" },
-                { id: 52, title: "我好像在哪见过你", src: "songs/我好像在哪见过你.mp3" },
-                { id: 53, title: "演员", src: "songs/演员.mp3" },
-                { id: 54, title: "绅士", src: "songs/绅士.mp3" },
-                { id: 55, title: "一半", src: "songs/一半.mp3" },
-                { id: 56, title: "小孩", src: "songs/小孩.mp3" },
-                { id: 57, title: "Stay Here", src: "songs/Stay Here.mp3" },
-                { id: 58, title: "花儿和少年", src: "songs/花儿和少年.mp3" },
-                { id: 59, title: "下雨了", src: "songs/下雨了.mp3" },
-                { id: 60, title: "动物世界", src: "songs/动物世界.mp3" },
-                { id: 61, title: "暧昧", src: "songs/暧昧.mp3" },
-                { id: 62, title: "像风一样", src: "songs/像风一样.mp3" },
-                { id: 63, title: "高尚", src: "songs/高尚.mp3" },
-                { id: 64, title: "骆驼", src: "songs/骆驼.mp3" },
-                { id: 65, title: "别", src: "songs/别.mp3" },
-                { id: 66, title: "火星人来过", src: "songs/火星人来过.mp3" },
-                { id: 67, title: "背过手", src: "songs/背过手.mp3" },
-                { id: 68, title: "渡", src: "songs/渡.mp3" },
-                { id: 69, title: "我害怕", src: "songs/我害怕.mp3" },
-                { id: 70, title: "摩天大楼", src: "songs/摩天大楼.mp3" },
-                { id: 71, title: "怪咖", src: "songs/怪咖.mp3" },
-                { id: 72, title: "肆无忌惮", src: "songs/肆无忌惮.mp3" },
-                { id: 73, title: "狐狸", src: "songs/狐狸.mp3" },
-                { id: 74, title: "天份", src: "songs/天份.mp3" },
-                { id: 75, title: "最好", src: "songs/最好.mp3" },
-                { id: 76, title: "醒来(Live)", src: "songs/醒来(Live).mp3" },
-                { id: 77, title: "哑巴", src: "songs/哑巴.mp3" },
-                { id: 78, title: "那是你离开了北京的生活", src: "songs/那是你离开了北京的生活.mp3" },
-                { id: 79, title: "违背的青春", src: "songs/违背的青春.mp3" },
-                { id: 80, title: "木偶人", src: "songs/木偶人.mp3" },
-                { id: 81, title: "慢半拍", src: "songs/慢半拍.mp3" },
-                { id: 82, title: "这么久没见", src: "songs/这么久没见.mp3" },
-                { id: 83, title: "笑场", src: "songs/笑场.mp3" },
-                { id: 84, title: "病态", src: "songs/病态.mp3" },
-                { id: 85, title: "尘", src: "songs/尘.mp3" },
-                { id: 86, title: "陪你去流浪", src: "songs/陪你去流浪.mp3" },
-                { id: 87, title: "配合", src: "songs/配合.mp3" },
-                { id: 88, title: "环", src: "songs/环.mp3" },
-                { id: 89, title: "聊表心意", src: "songs/聊表心意.mp3" },
-                { id: 90, title: "天外来物", src: "songs/天外来物.mp3" },
-                { id: 91, title: "不爱我", src: "songs/不爱我.mp3" },
-                { id: 92, title: "彩券", src: "songs/彩券.mp3" },
-                { id: 93, title: "野心", src: "songs/野心.mp3" },
-                { id: 94, title: "潘金莲", src: "songs/潘金莲.mp3" },
-                { id: 95, title: "耗尽", src: "songs/耗尽.mp3" },
-                { id: 96, title: "小尖尖", src: "songs/小尖尖.mp3" },
-                { id: 97, title: "迟迟", src: "songs/迟迟.mp3" },
-                { id: 98, title: "把你揉碎捏成苹果", src: "songs/把你揉碎捏成苹果.mp3" },
-                { id: 99, title: "纸船", src: "songs/纸船.mp3" },
-                { id: 100, title: "无数", src: "songs/无数.mp3" },
-                { id: 101, title: "凤毛麟角", src: "songs/凤毛麟角.mp3" },
-                { id: 102, title: "变废为宝", src: "songs/变废为宝.mp3" },
-                { id: 103, title: "你不是一个人", src: "songs/你不是一个人.mp3" },
-                { id: 104, title: "可", src: "songs/可.mp3" },
-                { id: 105, title: "男二号", src: "songs/男二号.mp3" },
-                { id: 106, title: "守候", src: "songs/守候.mp3" },
-                { id: 107, title: "洛城", src: "songs/洛城.mp3" },
-                { id: 108, title: "被人", src: "songs/被人.mp3" },
-                { id: 109, title: "关于你", src: "songs/关于你.mp3" },
-                { id: 110, title: "守村人", src: "songs/守村人.mp3" },
-                { id: 111, title: "银河少年", src: "songs/银河少年.mp3" },
-                { id: 112, title: "AI", src: "songs/AI.mp3" },
-                { id: 113, title: "Nothing", src: "songs/Nothing.mp3" },
-                { id: 114, title: "崇拜", src: "songs/崇拜.mp3" },
-                { id: 115, title: "情书", src: "songs/情书.mp3" },
-                { id: 116, title: "租购", src: "songs/租购.mp3" },
-                { id: 117, title: "解解闷", src: "songs/解解闷.mp3" },
-                { id: 118, title: "在那天回不去的路上", src: "songs/在那天回不去的路上.mp3" },
-                { id: 119, title: "念", src: "songs/念.mp3" }
-            ];
 
             // =============================================================
             // DOM 引用
@@ -1746,6 +1622,26 @@
             const letterModal = $('letterModal');
             const closeLetterModal = $('closeLetterModal');
             const letterContent = $('letterContent');
+
+            // =============================================================
+            // 加载音乐数据（外部 JSON）
+            // =============================================================
+            async function loadMusicData() {
+                try {
+                    const response = await fetch('music.json');
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    state.musicData = await response.json();
+                    console.log(`✅ 已加载 ${state.musicData.length} 首歌曲数据`);
+                    return state.musicData;
+                } catch (err) {
+                    console.error('❌ 加载音乐数据失败:', err);
+                    state.musicData = [];
+                    if (songListEl) {
+                        songListEl.innerHTML = '<div style="text-align:center;padding:30px;color:#e74c3c;">⚠️ 音乐数据加载失败，请检查 music.json 文件是否存在</div>';
+                    }
+                    return [];
+                }
+            }
 
             // =============================================================
             // GitHub API 交互
@@ -1863,7 +1759,6 @@
             function openLetter() {
                 letterModal.classList.add('open');
                 document.body.style.overflow = 'hidden';
-                // 加载信件内容
                 letterContent.textContent = '加载中...';
                 fetch('letter.txt')
                     .then(res => {
@@ -1923,8 +1818,17 @@
                 state.currentLyricIndex = -1;
                 if (!title) return;
 
-                const url = `lrcs/${encodeURIComponent(title)}.lrc`;
-                fetch(url)
+                // 从 state.musicData 中查找当前歌曲的 lrc 路径
+                const song = state.musicData.find(s => s.title === title);
+                let lrcUrl = '';
+                if (song && song.lrc) {
+                    lrcUrl = song.lrc;
+                } else {
+                    // fallback 到默认路径
+                    lrcUrl = `lrcs/${encodeURIComponent(title)}.lrc`;
+                }
+
+                fetch(lrcUrl)
                     .then(res => {
                         if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         return res.text();
@@ -2078,12 +1982,12 @@
             }
 
             // =============================================================
-            // 播放器核心
+            // 播放器核心（所有 musicData 替换为 state.musicData）
             // =============================================================
             const audio = new Audio();
 
             function getFilteredAndSorted() {
-                let list = [...musicData];
+                let list = [...state.musicData];
                 if (state.searchTerm.trim()) {
                     const t = state.searchTerm.trim().toLowerCase();
                     list = list.filter(s => s.title.toLowerCase().includes(t));
@@ -2140,16 +2044,16 @@
                     const playing = (s.id === state.currentId && state.isPlaying) ? 'playing' : '';
                     const plays = state.playCounts[s.id] || 0;
                     html += `
-                            <div class="song-item ${active}" data-id="${s.id}">
-                                <div class="info">
-                                    <span class="title">${s.title}</span>
-                                    <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
-                                </div>
-                                <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
-                                    <i class="fa ${(s.id === state.currentId && state.isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
-                                </button>
-                            </div>
-                        `;
+                                    <div class="song-item ${active}" data-id="${s.id}">
+                                        <div class="info">
+                                            <span class="title">${s.title}</span>
+                                            <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                        </div>
+                                        <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
+                                            <i class="fa ${(s.id === state.currentId && state.isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
+                                        </button>
+                                    </div>
+                                `;
                 });
                 songListEl.innerHTML = html;
                 songListEl.querySelectorAll('.btn-play').forEach(btn => {
@@ -2382,7 +2286,7 @@
             });
 
             // =============================================================
-            // 抽屉切换（优化版）
+            // 抽屉切换
             // =============================================================
             function toggleDrawer(id) {
                 const el = document.getElementById(id);
@@ -2448,33 +2352,41 @@
             backTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
             // =============================================================
-            // 初始化
+            // 初始化（异步加载）
             // =============================================================
-            try {
-                const saved = localStorage.getItem('dsp_lyrics_enabled');
-                if (saved !== null) {
-                    state.lyricsEnabled = JSON.parse(saved);
-                } else {
+            (async function init() {
+                // 1. 加载音乐数据
+                await loadMusicData();
+
+                // 2. 恢复歌词状态
+                try {
+                    const saved = localStorage.getItem('dsp_lyrics_enabled');
+                    if (saved !== null) {
+                        state.lyricsEnabled = JSON.parse(saved);
+                    } else {
+                        state.lyricsEnabled = true;
+                        localStorage.setItem('dsp_lyrics_enabled', 'true');
+                    }
+                    if (state.lyricsEnabled) toggleLyricsBtn.classList.add('active');
+                } catch (_) {
                     state.lyricsEnabled = true;
-                    localStorage.setItem('dsp_lyrics_enabled', 'true');
+                    toggleLyricsBtn.classList.add('active');
                 }
-                if (state.lyricsEnabled) toggleLyricsBtn.classList.add('active');
-            } catch (_) {
-                state.lyricsEnabled = true;
-                toggleLyricsBtn.classList.add('active');
-            }
 
-            if (state.lyricsEnabled) {
-                lyricsDisplay.style.display = 'flex';
-                fpLyrics.style.display = 'flex';
-            } else {
-                lyricsDisplay.style.display = 'none';
-                fpLyrics.style.display = 'none';
-            }
+                if (state.lyricsEnabled) {
+                    lyricsDisplay.style.display = 'flex';
+                    fpLyrics.style.display = 'flex';
+                } else {
+                    lyricsDisplay.style.display = 'none';
+                    fpLyrics.style.display = 'none';
+                }
 
-            loadStatsFromGitHub();
-            setInterval(loadStatsFromGitHub, 60000);
-            console.log('🎵 DSP 已启动（含信件功能）');
+                // 3. 加载统计并渲染
+                await loadStatsFromGitHub();
+                setInterval(loadStatsFromGitHub, 60000);
+                console.log('🎵 DSP 已启动（音乐数据从外部 JSON 加载）');
+            })();
+
         });
     </script>
 
