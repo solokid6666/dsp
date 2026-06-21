@@ -14,7 +14,7 @@
     </script>
 
     <style>
-        /* ===== 全局 ===== */
+        /* ===== 全局重置 & 毛玻璃 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -32,7 +32,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== 毛玻璃基类 ===== */
         .glass {
             background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(16px) saturate(180%);
@@ -41,7 +40,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
-        /* ===== Hero 全屏视频 ===== */
+        /* ===== Hero ===== */
         .hero-video {
             position: relative;
             width: 100%;
@@ -156,49 +155,7 @@
                 box-shadow: 0 8px 32px rgba(74, 105, 189, 0.12);
             }
 
-        @media (max-width: 768px) {
-            .nav-cards {
-                gap: 12px;
-            }
-
-            .nav-card {
-                padding: 18px 8px 16px;
-                border-radius: 18px;
-            }
-
-                .nav-card .icon {
-                    font-size: 2rem;
-                }
-
-                .nav-card .label {
-                    font-size: 0.9rem;
-                }
-
-                .nav-card .desc {
-                    display: none;
-                }
-        }
-
-        @media (max-width: 480px) {
-            .nav-cards {
-                gap: 8px;
-            }
-
-            .nav-card {
-                padding: 14px 4px 12px;
-                border-radius: 14px;
-            }
-
-                .nav-card .icon {
-                    font-size: 1.6rem;
-                }
-
-                .nav-card .label {
-                    font-size: 0.75rem;
-                }
-        }
-
-        /* ===== 抽屉容器 ===== */
+        /* ===== 抽屉 ===== */
         .drawer-wrap {
             max-width: 1100px;
             margin: 24px auto 0;
@@ -270,76 +227,7 @@
             padding: 0 24px 28px;
         }
 
-        /* ===== 图片灯箱 ===== */
-        .lightbox {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 999;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            animation: fadeIn 0.3s ease;
-        }
-
-            .lightbox.open {
-                display: flex;
-            }
-
-            .lightbox img {
-                max-width: 92vw;
-                max-height: 88vh;
-                border-radius: 20px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-                object-fit: contain;
-                animation: scaleIn 0.35s ease;
-            }
-
-            .lightbox .close-lb {
-                position: absolute;
-                top: 24px;
-                right: 30px;
-                font-size: 2.6rem;
-                color: #fff;
-                cursor: pointer;
-                opacity: 0.7;
-                transition: 0.25s;
-                background: none;
-                border: none;
-                line-height: 1;
-            }
-
-                .lightbox .close-lb:hover {
-                    opacity: 1;
-                    transform: rotate(90deg);
-                }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.92);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* ===== 图片网格 ===== */
+        /* ===== 图片 & 视频网格 ===== */
         .img-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -385,7 +273,6 @@
                         font-size: 0.8rem;
                     }
 
-        /* ===== 视频卡片 ===== */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -433,7 +320,7 @@
                         font-size: 0.8rem;
                     }
 
-        /* ===== 音乐馆 ===== */
+        /* ===== 音乐馆控制栏 ===== */
         .music-controls-bar {
             display: flex;
             flex-wrap: wrap;
@@ -590,7 +477,7 @@
                     cursor: pointer;
                 }
 
-        /* ===== 歌词核心样式 ===== */
+        /* ===== 歌词 ===== */
         .lyrics-display,
         .fp-lyrics {
             width: 100%;
@@ -621,7 +508,6 @@
             color: #4a69bd;
         }
 
-        /* 上下滑入特效 */
         @keyframes lyric-slide-out {
             0% {
                 opacity: 1;
@@ -877,51 +763,81 @@
                     border-radius: 0 0 0 20px;
                 }
 
-        /* 正在播放区域歌词容器 */
         #nowPlayingBar .lyrics-display {
             margin-top: 4px;
             min-height: 2.2em;
         }
 
-        /* ===== 返回顶部 ===== */
-        .back-top {
+        /* ===== 灯箱 ===== */
+        .lightbox {
+            display: none;
             position: fixed;
-            bottom: 90px;
-            right: 24px;
-            z-index: 400;
-            width: 46px;
-            height: 46px;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, 0.7);
+            inset: 0;
+            z-index: 999;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            color: #1d1d1f;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
+            padding: 30px;
+            animation: fadeIn 0.3s ease;
         }
 
-            .back-top.show {
+            .lightbox.open {
+                display: flex;
+            }
+
+            .lightbox img {
+                max-width: 92vw;
+                max-height: 88vh;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+                object-fit: contain;
+                animation: scaleIn 0.35s ease;
+            }
+
+            .lightbox .close-lb {
+                position: absolute;
+                top: 24px;
+                right: 30px;
+                font-size: 2.6rem;
+                color: #fff;
+                cursor: pointer;
+                opacity: 0.7;
+                transition: 0.25s;
+                background: none;
+                border: none;
+                line-height: 1;
+            }
+
+                .lightbox .close-lb:hover {
+                    opacity: 1;
+                    transform: rotate(90deg);
+                }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
                 opacity: 1;
-                pointer-events: auto;
-                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
             }
 
-            .back-top:hover {
-                background: rgba(255, 255, 255, 0.9);
-                transform: translateY(-4px);
-                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
+        }
 
-        /* ===== 留言板样式 ===== */
+        /* ===== 留言板 & 信件 ===== */
         .msg-form {
             display: flex;
             flex-direction: column;
@@ -997,6 +913,190 @@
                     background: #f8d7da;
                     color: #721c24;
                 }
+
+        /* 信件入口样式 */
+        .letter-entry {
+            text-align: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+            .letter-entry .letter-btn {
+                background: rgba(212, 160, 23, 0.12);
+                border: 1.5px solid #d4a017;
+                color: #d4a017;
+                padding: 10px 28px;
+                border-radius: 40px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                cursor: pointer;
+                transition: 0.3s;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+                .letter-entry .letter-btn:hover {
+                    background: #d4a017;
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(212, 160, 23, 0.3);
+                }
+
+        /* 信件模态框（毛玻璃） */
+        .letter-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+            .letter-modal.open {
+                display: flex;
+            }
+
+            .letter-modal .lm-box {
+                max-width: 700px;
+                width: 100%;
+                max-height: 80vh;
+                border-radius: 28px;
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(24px) saturate(180%);
+                -webkit-backdrop-filter: blur(24px) saturate(180%);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                animation: scaleIn 0.35s ease;
+            }
+
+            .letter-modal .lm-header {
+                padding: 16px 24px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            }
+
+                .letter-modal .lm-header h3 {
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    margin: 0;
+                    color: #1d1d1f;
+                }
+
+                .letter-modal .lm-header .close {
+                    background: none;
+                    border: none;
+                    font-size: 2rem;
+                    color: #8e8e93;
+                    cursor: pointer;
+                    line-height: 1;
+                    transition: 0.25s;
+                }
+
+                    .letter-modal .lm-header .close:hover {
+                        color: #1d1d1f;
+                        transform: rotate(90deg);
+                    }
+
+            .letter-modal .lm-body {
+                padding: 24px 28px;
+                overflow-y: auto;
+                font-family: "Georgia", "Times New Roman", serif;
+                font-size: 0.95rem;
+                line-height: 1.8;
+                white-space: pre-wrap;
+                word-break: break-word;
+                color: #1d1d1f;
+                flex: 1;
+            }
+
+        /* ===== 返回顶部 ===== */
+        .back-top {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            z-index: 400;
+            width: 46px;
+            height: 46px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            color: #1d1d1f;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+            .back-top.show {
+                opacity: 1;
+                pointer-events: auto;
+                transform: translateY(0);
+            }
+
+            .back-top:hover {
+                background: rgba(255, 255, 255, 0.9);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            }
+
+        /* ===== 工具按钮 ===== */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 40px;
+            background: #4a69bd;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(74, 105, 189, 0.25);
+        }
+
+            .btn-download:hover {
+                background: #3a5aad;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(74, 105, 189, 0.30);
+            }
+
+            .btn-download.outline {
+                background: transparent;
+                color: #4a69bd;
+                border: 1.5px solid #4a69bd;
+                box-shadow: none;
+            }
+
+                .btn-download.outline:hover {
+                    background: rgba(74, 105, 189, 0.06);
+                }
+
+            .btn-download.sm {
+                padding: 6px 16px;
+                font-size: 0.8rem;
+            }
 
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
@@ -1098,6 +1198,11 @@
             .msg-form {
                 max-width: 100%;
             }
+
+            .letter-modal .lm-body {
+                font-size: 0.85rem;
+                padding: 16px 18px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1192,6 +1297,15 @@
                 width: 36px;
                 height: 36px;
                 font-size: 1rem;
+            }
+
+            .letter-modal .lm-body {
+                font-size: 0.8rem;
+                padding: 14px 16px;
+            }
+
+            .letter-modal .lm-header h3 {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -1313,23 +1427,19 @@
 
                 <!-- 控制栏 -->
                 <div class="music-controls-bar">
-                    <!-- 播放模式 -->
                     <div class="mode-group">
                         <button id="modeOrder" class="active" title="顺序播放"><i class="fa fa-list"></i></button>
                         <button id="modeSingle" title="单曲循环"><i class="fa fa-repeat"></i></button>
                         <button id="modeRandom" title="随机播放"><i class="fa fa-random"></i></button>
                     </div>
-                    <!-- 排序 -->
                     <div class="sort-group">
                         <button id="sortTime" class="active"><i class="fa fa-clock-o"></i> 时间倒序</button>
                         <button id="sortPlays"><i class="fa fa-play-circle"></i> 播放次数</button>
                     </div>
-                    <!-- 搜索 -->
                     <div class="search-group">
                         <input type="text" id="searchInput" placeholder="搜索歌曲..." />
                         <button id="searchBtn"><i class="fa fa-search"></i></button>
                     </div>
-                    <!-- 数据 + 歌词开关 -->
                     <div class="data-group">
                         <button id="exportData"><i class="fa fa-download"></i> 导出</button>
                         <div class="file-input-wrap">
@@ -1355,7 +1465,6 @@
                             </button>
                         </div>
                     </div>
-                    <!-- 歌词显示行 -->
                     <div class="lyrics-display" id="lyricsDisplay">
                         <span class="lyric-text" id="lyricsText">歌词加载中...</span>
                     </div>
@@ -1370,7 +1479,7 @@
             </div>
         </div>
 
-        <!-- 留言板抽屉 -->
+        <!-- 留言板抽屉（含信件入口） -->
         <div class="drawer" id="drawerMessage">
             <div class="drawer-header" data-toggle="drawerMessage">
                 <div class="left"><i class="fa fa-commenting" style="color:#4a69bd;"></i> 留言板</div>
@@ -1378,6 +1487,15 @@
             </div>
             <div class="drawer-body">
                 <div style="max-width:600px;margin:0 auto;padding:4px 0;">
+
+                    <!-- 信件入口 -->
+                    <div class="letter-entry">
+                        <button class="letter-btn" id="openLetterBtn">
+                            <i class="fa fa-envelope"></i> 打开信件
+                        </button>
+                        <p style="font-size:0.8rem;color:#6e6e73;margin-top:6px;">来自开发者的信 📩</p>
+                    </div>
+
                     <p style="text-align:center;color:#6e6e73;margin-bottom:20px;font-size:0.95rem;">
                         你的留言只有开发者能看到，请放心留言 💌
                     </p>
@@ -1396,6 +1514,17 @@
     <div class="lightbox" id="lightbox">
         <button class="close-lb" id="closeLb">&times;</button>
         <img id="lbImage" src="" alt="放大预览" />
+    </div>
+
+    <!-- 信件模态框 -->
+    <div class="letter-modal" id="letterModal">
+        <div class="lm-box">
+            <div class="lm-header">
+                <h3>✉️ 致开发者的一封信</h3>
+                <button class="close" id="closeLetterModal">&times;</button>
+            </div>
+            <div class="lm-body" id="letterContent">加载中...</div>
+        </div>
     </div>
 
     <!-- 悬浮播放器 -->
@@ -1420,24 +1549,44 @@
     <button class="back-top" id="backTop" title="返回顶部"><i class="fa fa-chevron-up"></i></button>
 
     <!-- ============================================================ -->
-    <!-- JavaScript -->
+    <!-- JavaScript（优化版 + 信件功能） -->
     <!-- ============================================================ -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
             // =============================================================
-            // 0. GitHub 配置区（通过 Cloudflare Worker 代理）
+            // 配置
             // =============================================================
-            const WORKER_URL = 'https://summer-mode-77bd.1546885688.workers.dev';
-            const REPO_OWNER = 'solokid6666';
-            const REPO_NAME = 'dsp';
-            const ISSUE_NUMBER = 1;
-
-            const API_BASE = `${WORKER_URL}/repos/${REPO_OWNER}/${REPO_NAME}/issues/${ISSUE_NUMBER}/comments`;
-            console.log('🌐 API_BASE =', API_BASE);
+            const CONFIG = {
+                WORKER_URL: 'https://summer-mode-77bd.1546885688.workers.dev',
+                REPO_OWNER: 'solokid6666',
+                REPO_NAME: 'dsp',
+                ISSUE_NUMBER: 1,
+            };
+            const API_BASE = `${CONFIG.WORKER_URL}/repos/${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/issues/${CONFIG.ISSUE_NUMBER}/comments`;
 
             // =============================================================
-            // 1. 音乐数据
+            // 状态
+            // =============================================================
+            const state = {
+                currentId: null,
+                currentTitle: '',
+                currentSrc: '',
+                isPlaying: false,
+                mode: 'order',
+                sortMode: 'time',
+                searchTerm: '',
+                lyricsData: [],
+                lyricsEnabled: true,
+                currentLyricIndex: -1,
+                playCounts: {},
+                isLoadingStats: false,
+                userId: localStorage.getItem('uid') || 'user_' + Date.now(),
+            };
+            localStorage.setItem('uid', state.userId);
+
+            // =============================================================
+            // 音乐数据
             // =============================================================
             const musicData = [
                 { id: 1, title: "王子归来", src: "songs/王子归来.mp3" },
@@ -1562,26 +1711,57 @@
             ];
 
             // =============================================================
-            // 2. GitHub API 辅助函数（通过 Worker 代理）
+            // DOM 引用
             // =============================================================
+            const $ = id => document.getElementById(id);
+            const songListEl = $('songList');
+            const noResultEl = $('noResult');
+            const nowBar = $('nowPlayingBar');
+            const currentSongName = $('currentSongName');
+            const fpPlayBtn = $('fpPlayBtn');
+            const fpTitle = $('fpTitle');
+            const fpProgressBar = $('fpProgressBar');
+            const fpPlayer = $('floatingPlayer');
+            const fpClose = $('fpClose');
+            const fpPrev = $('fpPrev');
+            const fpNext = $('fpNext');
+            const fpPlayPause = $('fpPlayPause');
+            const lyricsDisplay = $('lyricsDisplay');
+            const lyricsText = $('lyricsText');
+            const fpLyrics = $('fpLyrics');
+            const fpLyricsText = $('fpLyricsText');
+            const toggleLyricsBtn = $('toggleLyricsBtn');
+            const modeOrder = $('modeOrder');
+            const modeSingle = $('modeSingle');
+            const modeRandom = $('modeRandom');
+            const sortTime = $('sortTime');
+            const sortPlays = $('sortPlays');
+            const searchInput = $('searchInput');
+            const searchBtn = $('searchBtn');
+            const exportBtn = $('exportData');
+            const importInput = $('importData');
 
+            // 信件相关 DOM
+            const openLetterBtn = $('openLetterBtn');
+            const letterModal = $('letterModal');
+            const closeLetterModal = $('closeLetterModal');
+            const letterContent = $('letterContent');
+
+            // =============================================================
+            // GitHub API 交互
+            // =============================================================
             async function fetchComments() {
-                console.log('📡 GET', API_BASE);
                 const res = await fetch(API_BASE, {
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
                 });
                 if (!res.ok) {
                     const err = await res.text();
-                    console.error('❌ GET 失败:', res.status, err);
                     throw new Error(`GitHub API error ${res.status}: ${err}`);
                 }
                 return res.json();
             }
 
             async function addComment(body) {
-                console.log('📡 POST', API_BASE);
                 const res = await fetch(API_BASE, {
                     method: 'POST',
                     headers: {
@@ -1592,21 +1772,17 @@
                 });
                 if (!res.ok) {
                     const err = await res.text();
-                    console.error('❌ POST 失败:', res.status, err);
                     throw new Error(`GitHub API error ${res.status}: ${err}`);
                 }
                 return res.json();
             }
 
             // =============================================================
-            // 3. 播放计数统计（从 GitHub 读取）
+            // 播放统计
             // =============================================================
-            let playCounts = {};
-            let isLoadingStats = false;
-
             async function loadStatsFromGitHub() {
-                if (isLoadingStats) return;
-                isLoadingStats = true;
+                if (state.isLoadingStats) return;
+                state.isLoadingStats = true;
                 try {
                     const comments = await fetchComments();
                     const counts = {};
@@ -1622,38 +1798,32 @@
                             }
                         }
                     });
-                    playCounts = counts;
+                    state.playCounts = counts;
                 } catch (e) {
                     console.warn('加载播放统计失败:', e);
                 } finally {
-                    isLoadingStats = false;
+                    state.isLoadingStats = false;
                 }
                 renderList();
             }
 
-            // =============================================================
-            // 4. 记录播放
-            // =============================================================
-            const USER_ID = localStorage.getItem('uid') || 'user_' + Date.now();
-            localStorage.setItem('uid', USER_ID);
-
             async function recordPlay(songId, title) {
-                const body = `play|${songId}|${title}|${USER_ID}|${Date.now()}`;
+                const body = `play|${songId}|${title}|${state.userId}|${Date.now()}`;
                 try {
                     await addComment(body);
                 } catch (e) {
                     console.error('记录播放失败:', e);
                 }
-                await loadStatsFromGitHub();
+                loadStatsFromGitHub();
             }
 
             // =============================================================
-            // 5. 留言板
+            // 留言板
             // =============================================================
-            const msgName = document.getElementById('msgName');
-            const msgContent = document.getElementById('msgContent');
-            const msgSubmit = document.getElementById('msgSubmitBtn');
-            const msgStatus = document.getElementById('msgStatus');
+            const msgName = $('msgName');
+            const msgContent = $('msgContent');
+            const msgSubmit = $('msgSubmitBtn');
+            const msgStatus = $('msgStatus');
 
             async function submitMessage() {
                 const name = msgName.value.trim() || '匿名用户';
@@ -1684,59 +1854,50 @@
 
             msgSubmit.addEventListener('click', submitMessage);
             msgContent.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    submitMessage();
+                if (e.ctrlKey && e.key === 'Enter') submitMessage();
+            });
+
+            // =============================================================
+            // 信件功能
+            // =============================================================
+            function openLetter() {
+                letterModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                // 加载信件内容
+                letterContent.textContent = '加载中...';
+                fetch('letter.txt')
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        return res.text();
+                    })
+                    .then(text => {
+                        letterContent.textContent = text || '（信件内容为空）';
+                    })
+                    .catch(err => {
+                        letterContent.textContent = '💌 无法加载信件';
+                        console.warn('信件加载失败:', err);
+                    });
+            }
+
+            function closeLetter() {
+                letterModal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            openLetterBtn.addEventListener('click', openLetter);
+            closeLetterModal.addEventListener('click', closeLetter);
+            letterModal.addEventListener('click', function (e) {
+                if (e.target === this) closeLetter();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && letterModal.classList.contains('open')) {
+                    closeLetter();
                 }
             });
 
             // =============================================================
-            // 6. 播放器核心（与原有逻辑整合）
+            // 歌词解析与动画
             // =============================================================
-            const audio = new Audio();
-            let currentId = null;
-            let currentTitle = '';
-            let currentSrc = '';
-            let isPlaying = false;
-            let mode = 'order';
-            let sortMode = 'time';
-            let searchTerm = '';
-
-            // ---- 歌词相关 ----
-            let lyricsData = [];
-            let lyricsEnabled = true;
-            let currentLyricIndex = -1;
-
-            // DOM 引用
-            const songListEl = document.getElementById('songList');
-            const noResultEl = document.getElementById('noResult');
-            const nowBar = document.getElementById('nowPlayingBar');
-            const currentSongName = document.getElementById('currentSongName');
-            const fpPlayBtn = document.getElementById('fpPlayBtn');
-            const fpTitle = document.getElementById('fpTitle');
-            const fpProgressBar = document.getElementById('fpProgressBar');
-            const fpPlayer = document.getElementById('floatingPlayer');
-            const fpClose = document.getElementById('fpClose');
-            const fpPrev = document.getElementById('fpPrev');
-            const fpNext = document.getElementById('fpNext');
-            const fpPlayPause = document.getElementById('fpPlayPause');
-            const lyricsDisplay = document.getElementById('lyricsDisplay');
-            const lyricsText = document.getElementById('lyricsText');
-            const fpLyrics = document.getElementById('fpLyrics');
-            const fpLyricsText = document.getElementById('fpLyricsText');
-            const toggleLyricsBtn = document.getElementById('toggleLyricsBtn');
-
-            // 模式按钮
-            const modeOrder = document.getElementById('modeOrder');
-            const modeSingle = document.getElementById('modeSingle');
-            const modeRandom = document.getElementById('modeRandom');
-            const sortTime = document.getElementById('sortTime');
-            const sortPlays = document.getElementById('sortPlays');
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
-            const exportBtn = document.getElementById('exportData');
-            const importInput = document.getElementById('importData');
-
-            // ---- 歌词解析 ----
             function parseLrc(text) {
                 const lines = text.split('\n');
                 const result = [];
@@ -1747,14 +1908,10 @@
                         const min = parseInt(match[1]);
                         const sec = parseInt(match[2]);
                         let cent = 0;
-                        if (match[3]) {
-                            cent = parseInt(match[3].padEnd(3, '0').slice(0, 3));
-                        }
+                        if (match[3]) cent = parseInt(match[3].padEnd(3, '0').slice(0, 3));
                         const time = min * 60 + sec + cent / 1000;
                         const textPart = line.replace(/\[\d{2}:\d{2}(?:\.\d{2,3})?\]/, '').trim();
-                        if (textPart) {
-                            result.push({ time, text: textPart });
-                        }
+                        if (textPart) result.push({ time, text: textPart });
                     }
                 }
                 result.sort((a, b) => a.time - b.time);
@@ -1762,8 +1919,8 @@
             }
 
             function loadLyrics(title) {
-                lyricsData = [];
-                currentLyricIndex = -1;
+                state.lyricsData = [];
+                state.currentLyricIndex = -1;
                 if (!title) return;
 
                 const url = `lrcs/${encodeURIComponent(title)}.lrc`;
@@ -1776,12 +1933,12 @@
                         if (!text.trim()) throw new Error('文件为空');
                         const parsed = parseLrc(text);
                         if (parsed.length === 0) throw new Error('没有有效歌词行');
-                        lyricsData = parsed;
-                        if (lyricsEnabled) updateLyricsDisplay(true);
+                        state.lyricsData = parsed;
+                        if (state.lyricsEnabled) updateLyricsDisplay(true);
                     })
                     .catch(err => {
-                        lyricsData = [];
-                        if (lyricsEnabled) {
+                        state.lyricsData = [];
+                        if (state.lyricsEnabled) {
                             const msg = err.message.includes('404') ? '未找到歌词文件' :
                                 err.message.includes('空') ? '歌词文件为空' :
                                     err.message.includes('有效') ? '歌词格式不正确' : '暂无歌词';
@@ -1791,7 +1948,7 @@
             }
 
             function setLyricText(text, animate = true) {
-                if (lyricsEnabled) {
+                if (state.lyricsEnabled) {
                     lyricsDisplay.style.display = 'flex';
                     fpLyrics.style.display = 'flex';
                 }
@@ -1817,7 +1974,8 @@
                 el.style.opacity = '';
                 el.style.transform = '';
 
-                if (!animate || !lyricsEnabled || text.includes('暂无') || text.includes('未找到') || text.includes('格式')) {
+                if (!animate || !state.lyricsEnabled || text.includes('暂无') || text.includes('未找到') || text.includes(
+                    '格式')) {
                     el.textContent = text;
                     el.style.opacity = '1';
                     el.style.transform = 'translateY(0)';
@@ -1862,7 +2020,7 @@
             }
 
             function updateLyricsDisplay(force = false) {
-                if (!lyricsEnabled || !currentId) {
+                if (!state.lyricsEnabled || !state.currentId) {
                     lyricsDisplay.style.display = 'none';
                     fpLyrics.style.display = 'none';
                     return;
@@ -1872,8 +2030,8 @@
 
                 const currentTime = audio.currentTime;
                 let found = -1;
-                for (let i = 0; i < lyricsData.length; i++) {
-                    if (lyricsData[i].time <= currentTime) {
+                for (let i = 0; i < state.lyricsData.length; i++) {
+                    if (state.lyricsData[i].time <= currentTime) {
                         found = i;
                     } else {
                         break;
@@ -1882,9 +2040,9 @@
 
                 let newText = '';
                 if (found !== -1) {
-                    newText = lyricsData[found].text || '♪';
-                    if (found !== currentLyricIndex || force) {
-                        currentLyricIndex = found;
+                    newText = state.lyricsData[found].text || '♪';
+                    if (found !== state.currentLyricIndex || force) {
+                        state.currentLyricIndex = found;
                         lyricsText._forceRefresh = true;
                         fpLyricsText._forceRefresh = true;
                         setLyricText(newText, true);
@@ -1894,9 +2052,9 @@
                         setLyricText(newText, true);
                     }
                 } else {
-                    if (currentLyricIndex !== -1 || force) {
-                        currentLyricIndex = -1;
-                        newText = lyricsData.length > 0 ? '♪ 等待前奏 ♪' : '暂无歌词';
+                    if (state.currentLyricIndex !== -1 || force) {
+                        state.currentLyricIndex = -1;
+                        newText = state.lyricsData.length > 0 ? '♪ 等待前奏 ♪' : '暂无歌词';
                         lyricsText._forceRefresh = true;
                         fpLyricsText._forceRefresh = true;
                         setLyricText(newText, false);
@@ -1905,12 +2063,12 @@
             }
 
             function toggleLyrics() {
-                lyricsEnabled = !lyricsEnabled;
-                toggleLyricsBtn.classList.toggle('active', lyricsEnabled);
-                try { localStorage.setItem('dsp_lyrics_enabled', JSON.stringify(lyricsEnabled)); } catch (_) { }
-                if (lyricsEnabled) {
-                    if (currentId) {
-                        if (lyricsData.length === 0) loadLyrics(currentTitle);
+                state.lyricsEnabled = !state.lyricsEnabled;
+                toggleLyricsBtn.classList.toggle('active', state.lyricsEnabled);
+                localStorage.setItem('dsp_lyrics_enabled', JSON.stringify(state.lyricsEnabled));
+                if (state.lyricsEnabled) {
+                    if (state.currentId) {
+                        if (state.lyricsData.length === 0) loadLyrics(state.currentTitle);
                         else updateLyricsDisplay(true);
                     }
                 } else {
@@ -1919,17 +2077,21 @@
                 }
             }
 
-            // ---- 核心播放控制 ----
+            // =============================================================
+            // 播放器核心
+            // =============================================================
+            const audio = new Audio();
+
             function getFilteredAndSorted() {
                 let list = [...musicData];
-                if (searchTerm.trim()) {
-                    const t = searchTerm.trim().toLowerCase();
+                if (state.searchTerm.trim()) {
+                    const t = state.searchTerm.trim().toLowerCase();
                     list = list.filter(s => s.title.toLowerCase().includes(t));
                 }
-                if (sortMode === 'time') {
+                if (state.sortMode === 'time') {
                     list.sort((a, b) => b.id - a.id);
                 } else {
-                    list.sort((a, b) => (playCounts[b.id] || 0) - (playCounts[a.id] || 0));
+                    list.sort((a, b) => (state.playCounts[b.id] || 0) - (state.playCounts[a.id] || 0));
                 }
                 return list;
             }
@@ -1937,10 +2099,10 @@
             function getNextSong() {
                 const list = getFilteredAndSorted();
                 if (!list.length) return null;
-                const idx = list.findIndex(s => s.id === currentId);
+                const idx = list.findIndex(s => s.id === state.currentId);
                 if (idx === -1) return list[0] || null;
-                if (mode === 'single') return list[idx];
-                if (mode === 'random') {
+                if (state.mode === 'single') return list[idx];
+                if (state.mode === 'random') {
                     if (list.length <= 1) return list[0];
                     let ri;
                     do { ri = Math.floor(Math.random() * list.length); } while (ri === idx);
@@ -1952,10 +2114,10 @@
             function getPrevSong() {
                 const list = getFilteredAndSorted();
                 if (!list.length) return null;
-                const idx = list.findIndex(s => s.id === currentId);
+                const idx = list.findIndex(s => s.id === state.currentId);
                 if (idx === -1) return list[0] || null;
-                if (mode === 'single') return list[idx];
-                if (mode === 'random') {
+                if (state.mode === 'single') return list[idx];
+                if (state.mode === 'random') {
                     if (list.length <= 1) return list[0];
                     let ri;
                     do { ri = Math.floor(Math.random() * list.length); } while (ri === idx);
@@ -1974,20 +2136,20 @@
                 noResultEl.style.display = 'none';
                 let html = '';
                 list.forEach(s => {
-                    const active = (s.id === currentId) ? 'active-song' : '';
-                    const playing = (s.id === currentId && isPlaying) ? 'playing' : '';
-                    const plays = playCounts[s.id] || 0;
+                    const active = (s.id === state.currentId) ? 'active-song' : '';
+                    const playing = (s.id === state.currentId && state.isPlaying) ? 'playing' : '';
+                    const plays = state.playCounts[s.id] || 0;
                     html += `
-                                                <div class="song-item ${active}" data-id="${s.id}">
-                                                    <div class="info">
-                                                        <span class="title">${s.title}</span>
-                                                        <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
-                                                    </div>
-                                                    <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
-                                                        <i class="fa ${(s.id === currentId && isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
-                                                    </button>
-                                                </div>
-                                            `;
+                            <div class="song-item ${active}" data-id="${s.id}">
+                                <div class="info">
+                                    <span class="title">${s.title}</span>
+                                    <span class="plays"><i class="fa fa-play-circle-o"></i> ${plays}</span>
+                                </div>
+                                <button class="btn-play ${playing}" data-id="${s.id}" data-src="${s.src}" data-title="${s.title}">
+                                    <i class="fa ${(s.id === state.currentId && state.isPlaying) ? 'fa-pause' : 'fa-play'}"></i>
+                                </button>
+                            </div>
+                        `;
                 });
                 songListEl.innerHTML = html;
                 songListEl.querySelectorAll('.btn-play').forEach(btn => {
@@ -1996,7 +2158,7 @@
                         const id = parseInt(this.dataset.id);
                         const src = this.dataset.src;
                         const title = this.dataset.title;
-                        if (currentId === id && isPlaying) {
+                        if (state.currentId === id && state.isPlaying) {
                             pauseAudio();
                         } else {
                             playSong(id, src, title);
@@ -2006,20 +2168,20 @@
             }
 
             async function playSong(id, src, title) {
-                if (currentId === id && isPlaying) return;
-                if (currentId === id && !isPlaying) {
+                if (state.currentId === id && state.isPlaying) return;
+                if (state.currentId === id && !state.isPlaying) {
                     resumeAudio();
                     return;
                 }
-                currentId = id;
-                currentSrc = src;
-                currentTitle = title;
+                state.currentId = id;
+                state.currentSrc = src;
+                state.currentTitle = title;
                 audio.src = src;
                 loadLyrics(title);
                 try {
                     await audio.play();
-                    isPlaying = true;
-                    await recordPlay(id, title);
+                    state.isPlaying = true;
+                    recordPlay(id, title);
                     updateUI();
                 } catch (e) {
                     console.warn('播放失败:', e);
@@ -2029,19 +2191,19 @@
 
             function pauseAudio() {
                 audio.pause();
-                isPlaying = false;
+                state.isPlaying = false;
                 updateUI();
             }
 
             function resumeAudio() {
                 audio.play().then(() => {
-                    isPlaying = true;
+                    state.isPlaying = true;
                     updateUI();
                 }).catch(() => { });
             }
 
             function togglePlay() {
-                if (!currentId) {
+                if (!state.currentId) {
                     const list = getFilteredAndSorted();
                     if (list.length) {
                         const first = list[0];
@@ -2049,7 +2211,7 @@
                     }
                     return;
                 }
-                if (isPlaying) pauseAudio();
+                if (state.isPlaying) pauseAudio();
                 else resumeAudio();
             }
 
@@ -2064,30 +2226,30 @@
             }
 
             function updateUI() {
-                if (currentId && currentTitle) {
+                if (state.currentId && state.currentTitle) {
                     nowBar.style.display = 'flex';
-                    currentSongName.textContent = currentTitle;
-                    fpTitle.textContent = currentTitle;
+                    currentSongName.textContent = state.currentTitle;
+                    fpTitle.textContent = state.currentTitle;
                     fpPlayer.classList.add('show');
                 } else {
                     nowBar.style.display = 'none';
                     fpTitle.textContent = '未播放';
                     fpPlayer.classList.remove('show');
                 }
-                const icon = isPlaying ? 'fa-pause' : 'fa-play';
+                const icon = state.isPlaying ? 'fa-pause' : 'fa-play';
                 fpPlayBtn.innerHTML = `<i class="fa ${icon}"></i>`;
                 if (fpPlayPause) {
-                    fpPlayPause.innerHTML = isPlaying ?
+                    fpPlayPause.innerHTML = state.isPlaying ?
                         '<i class="fa fa-pause"></i> 暂停' :
                         '<i class="fa fa-play"></i> 播放';
                 }
                 renderList();
-                if (lyricsEnabled) updateLyricsDisplay(true);
+                if (state.lyricsEnabled) updateLyricsDisplay(true);
             }
 
             // ---- 音频事件 ----
             audio.addEventListener('ended', function () {
-                if (mode === 'single') {
+                if (state.mode === 'single') {
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
                 } else {
@@ -2101,7 +2263,7 @@
                     const pct = (audio.currentTime / audio.duration) * 100;
                     fpProgressBar.style.width = pct + '%';
                 }
-                if (lyricsEnabled && currentId) {
+                if (state.lyricsEnabled && state.currentId) {
                     if (!lyricUpdateTimer) {
                         lyricUpdateTimer = setTimeout(() => {
                             updateLyricsDisplay(false);
@@ -2112,17 +2274,19 @@
             });
 
             audio.addEventListener('play', function () {
-                isPlaying = true;
+                state.isPlaying = true;
                 updateUI();
             });
             audio.addEventListener('pause', function () {
-                isPlaying = false;
+                state.isPlaying = false;
                 updateUI();
             });
 
-            // ---- 模式切换 ----
+            // =============================================================
+            // 模式 / 排序 / 搜索 / 导入导出
+            // =============================================================
             function setMode(m) {
-                mode = m;
+                state.mode = m;
                 [modeOrder, modeSingle, modeRandom].forEach(b => b.classList.remove('active'));
                 if (m === 'order') modeOrder.classList.add('active');
                 else if (m === 'single') modeSingle.classList.add('active');
@@ -2130,7 +2294,7 @@
             }
 
             function setSort(m) {
-                sortMode = m;
+                state.sortMode = m;
                 [sortTime, sortPlays].forEach(b => b.classList.remove('active'));
                 if (m === 'time') sortTime.classList.add('active');
                 else sortPlays.classList.add('active');
@@ -2138,14 +2302,13 @@
             }
 
             function doSearch() {
-                searchTerm = searchInput.value;
+                state.searchTerm = searchInput.value;
                 renderList();
             }
 
-            // ---- 导入导出（保留本地备份） ----
             function exportData() {
                 const data = {
-                    playCounts: playCounts,
+                    playCounts: state.playCounts,
                     exportedAt: new Date().toISOString(),
                     version: '1.0'
                 };
@@ -2168,7 +2331,7 @@
                         const data = JSON.parse(e.target.result);
                         if (data.playCounts && typeof data.playCounts === 'object') {
                             if (confirm('导入将覆盖当前本地计数（不会影响GitHub），确定继续吗？')) {
-                                playCounts = data.playCounts;
+                                state.playCounts = data.playCounts;
                                 renderList();
                                 alert('✅ 导入成功（仅本地显示）');
                             }
@@ -2181,7 +2344,7 @@
             }
 
             // =============================================================
-            // 7. 事件绑定
+            // 事件绑定
             // =============================================================
             modeOrder.addEventListener('click', () => setMode('order'));
             modeSingle.addEventListener('click', () => setMode('single'));
@@ -2209,7 +2372,7 @@
 
             toggleLyricsBtn.addEventListener('click', toggleLyrics);
 
-            // ★★★ 修复：全局键盘事件中排除 TEXTAREA ★★★
+            // 键盘：排除输入框和文本域
             document.addEventListener('keydown', function (e) {
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
                 if (e.code === 'Space') {
@@ -2219,23 +2382,19 @@
             });
 
             // =============================================================
-            // 8. 抽屉切换
+            // 抽屉切换（优化版）
             // =============================================================
             function toggleDrawer(id) {
                 const el = document.getElementById(id);
                 if (!el) return;
                 const isOpen = el.classList.contains('open');
                 el.classList.toggle('open');
-                document.querySelectorAll('.nav-card').forEach(card => {
-                    const target = card.dataset.target;
-                    if (target === id) {
-                        card.classList.toggle('active', !isOpen);
-                    }
-                });
+                const card = document.querySelector(`.nav-card[data-target="${id}"]`);
+                if (card) card.classList.toggle('active', !isOpen);
             }
 
             document.querySelectorAll('.nav-card').forEach(card => {
-                card.addEventListener('click', function (e) {
+                card.addEventListener('click', function () {
                     const target = this.dataset.target;
                     toggleDrawer(target);
                     const el = document.getElementById(target);
@@ -2246,18 +2405,19 @@
             });
 
             document.querySelectorAll('.drawer-header[data-toggle]').forEach(header => {
-                header.addEventListener('click', function (e) {
+                header.addEventListener('click', function () {
                     const target = this.dataset.toggle;
                     toggleDrawer(target);
                 });
             });
 
             // =============================================================
-            // 9. 图片灯箱
+            // 图片灯箱
             // =============================================================
-            const lightbox = document.getElementById('lightbox');
-            const lbImage = document.getElementById('lbImage');
-            const closeLb = document.getElementById('closeLb');
+            const lightbox = $('lightbox');
+            const lbImage = $('lbImage');
+            const closeLb = $('closeLb');
+
             document.querySelectorAll('[data-lb]').forEach(el => {
                 el.addEventListener('click', function () {
                     lbImage.src = this.dataset.lb;
@@ -2275,9 +2435,9 @@
             document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
 
             // =============================================================
-            // 10. 返回顶部
+            // 返回顶部
             // =============================================================
-            const backTop = document.getElementById('backTop');
+            const backTop = $('backTop');
             window.addEventListener('scroll', function () {
                 if (window.scrollY > 400) {
                     backTop.classList.add('show');
@@ -2288,23 +2448,23 @@
             backTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
             // =============================================================
-            // 11. 初始化
+            // 初始化
             // =============================================================
             try {
                 const saved = localStorage.getItem('dsp_lyrics_enabled');
                 if (saved !== null) {
-                    lyricsEnabled = JSON.parse(saved);
+                    state.lyricsEnabled = JSON.parse(saved);
                 } else {
-                    lyricsEnabled = true;
+                    state.lyricsEnabled = true;
                     localStorage.setItem('dsp_lyrics_enabled', 'true');
                 }
-                if (lyricsEnabled) toggleLyricsBtn.classList.add('active');
+                if (state.lyricsEnabled) toggleLyricsBtn.classList.add('active');
             } catch (_) {
-                lyricsEnabled = true;
+                state.lyricsEnabled = true;
                 toggleLyricsBtn.classList.add('active');
             }
 
-            if (lyricsEnabled) {
+            if (state.lyricsEnabled) {
                 lyricsDisplay.style.display = 'flex';
                 fpLyrics.style.display = 'flex';
             } else {
@@ -2314,7 +2474,7 @@
 
             loadStatsFromGitHub();
             setInterval(loadStatsFromGitHub, 60000);
-            console.log('🎵 DSP 已启动（通过 Cloudflare Worker 代理）');
+            console.log('🎵 DSP 已启动（含信件功能）');
         });
     </script>
 
