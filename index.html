@@ -1863,7 +1863,7 @@
 
                 // 乐观提示，但实际结果由 flushPending 决定
                 msgStatus.className = 'status success';
-                msgStatus.textContent = '✅ 留言已加入队列，正在后台同步...';
+                msgStatus.textContent = '✅ 留言已提交，感谢反馈';
                 msgContent.value = '';
                 msgName.value = '';
                 msgSubmit.disabled = false;
@@ -2284,6 +2284,8 @@
             // ---- 音频事件 ----
             audio.addEventListener('ended', function () {
                 if (state.mode === 'single') {
+                    // 单曲循环：记录本次完整播放，然后重新播放
+                    recordPlay(state.currentId, state.currentTitle); // 异步，不阻塞播放
                     audio.currentTime = 0;
                     audio.play().catch(() => { });
                 } else {
